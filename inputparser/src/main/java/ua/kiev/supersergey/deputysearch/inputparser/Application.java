@@ -18,9 +18,9 @@ import java.io.InputStreamReader;
 public class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-        InputStreamReader inputStreamReader = context.getBean(JsonInputFileReader.class).read();
-        context.getBean(DeclarationsDeserializer.class).deserializeDeclarations(inputStreamReader);
         try {
+            InputStreamReader inputStreamReader = context.getBean(JsonInputFileReader.class).read();
+            context.getBean(DeclarationsDeserializer.class).deserializeDeclarations(inputStreamReader);
             inputStreamReader.close();
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input data", ex);

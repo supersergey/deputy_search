@@ -13,8 +13,8 @@ import java.util.List;
  * Created by supersergey on 22.04.18.
  */
 @Slf4j
-public class CommonListDeserializer<T> {
-    public List<T> deserialize(JsonNode nodeList, ObjectMapper mapper, NodeDeserializer<T> nodeDeserializer) {
+public abstract class AbstractNodeListDeserializer<T> {
+    public List<T> deserialize(JsonNode nodeList, ObjectMapper mapper) {
         if (nodeList == null || nodeList.size() == 0) {
             return Collections.emptyList();
         }
@@ -22,9 +22,11 @@ public class CommonListDeserializer<T> {
         Iterator<JsonNode> iterator = nodeList.elements();
         while (iterator.hasNext()) {
             JsonNode node = iterator.next();
-            T element = nodeDeserializer.deserialize(node, mapper);
+            T element = deserializeNode(node, mapper);
             result.add(element);
         }
         return result;
     }
+
+    public abstract T deserializeNode(JsonNode node, ObjectMapper mapper);
 }
