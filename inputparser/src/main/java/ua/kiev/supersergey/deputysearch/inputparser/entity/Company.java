@@ -1,13 +1,12 @@
 package ua.kiev.supersergey.deputysearch.inputparser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  * Created by supersergey on 21.04.18.
@@ -16,6 +15,7 @@ import javax.persistence.OneToMany;
 @Entity
 @NoArgsConstructor
 public class Company {
+    @Id
     private String name;
     @JsonIgnore
     @ManyToOne

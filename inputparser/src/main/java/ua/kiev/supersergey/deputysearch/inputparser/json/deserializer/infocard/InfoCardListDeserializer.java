@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.inputparser.deserializer.infocard;
+package ua.kiev.supersergey.deputysearch.inputparser.json.deserializer.infocard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.kiev.supersergey.deputysearch.inputparser.deserializer.AbstractNodeListDeserializer;
+import ua.kiev.supersergey.deputysearch.inputparser.json.deserializer.AbstractNodeListDeserializer;
 import ua.kiev.supersergey.deputysearch.inputparser.entity.Company;
 import ua.kiev.supersergey.deputysearch.inputparser.entity.InfoCard;
-import ua.kiev.supersergey.deputysearch.inputparser.util.JsonNodeUtils;
+import ua.kiev.supersergey.deputysearch.inputparser.json.util.JsonNodeUtils;
 
 import java.util.List;
 

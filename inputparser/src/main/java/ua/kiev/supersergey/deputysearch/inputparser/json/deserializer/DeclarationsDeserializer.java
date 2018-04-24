@@ -1,13 +1,13 @@
-package ua.kiev.supersergey.deputysearch.inputparser.deserializer;
+package ua.kiev.supersergey.deputysearch.inputparser.json.deserializer;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.kiev.supersergey.deputysearch.inputparser.deserializer.infocard.InfoCardListDeserializer;
+import reactor.core.publisher.Flux;
 import ua.kiev.supersergey.deputysearch.inputparser.entity.InfoCard;
-import ua.kiev.supersergey.deputysearch.inputparser.util.JsonNodeUtils;
+import ua.kiev.supersergey.deputysearch.inputparser.json.util.JsonNodeUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -33,13 +33,14 @@ public class DeclarationsDeserializer {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public List<InfoCard> deserializeDeclarations(InputStreamReader isr) {
+    public Flux<InfoCard> deserializeDeclarations(byte[] rawContent) {
         try {
-            JsonNode root = mapper.readTree(isr);
+            JsonNode root = mapper.readTree(rawContent);
             JsonNode objectList = root.get("results").get("object_list");
-            return JsonNodeUtils.isEmptyList(objectList) ?
+            List<InfoCard> result = JsonNodeUtils.isEmptyList(objectList) ?
                     Collections.EMPTY_LIST :
                     infoCardListDeserializer.deserialize(objectList, mapper);
+            return Flux.fromIterable(result);
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input stream");
         }

@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.inputparser.util;
+package ua.kiev.supersergey.deputysearch.inputparser.json.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
