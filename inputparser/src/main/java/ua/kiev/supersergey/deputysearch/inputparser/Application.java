@@ -35,6 +35,8 @@ public class Application {
             byte[] rawJson = JsonInputFileReader.read(Paths.get(resource.getFile()));
             Flux<InfoCard> infoCardFlux = context.getBean(DeclarationsDeserializer.class).deserializeDeclarations(rawJson);
             infoCardFlux.subscribe(System.out::println);
+            infoCardFlux.blockLast();
+            context.close();
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input data", ex);
         }
