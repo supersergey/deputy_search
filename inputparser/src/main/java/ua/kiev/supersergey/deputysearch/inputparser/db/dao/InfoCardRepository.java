@@ -9,5 +9,5 @@ import ua.kiev.supersergey.deputysearch.inputparser.entity.InfoCard;
  */
 @Repository
 public interface InfoCardRepository extends PagingAndSortingRepository<InfoCard, String> {
-
+    Iterable<InfoCard> findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(String firstName, String patronymic, String lastName);
 }

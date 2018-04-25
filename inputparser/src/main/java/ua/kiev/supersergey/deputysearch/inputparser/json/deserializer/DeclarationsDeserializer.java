@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import ua.kiev.supersergey.deputysearch.inputparser.entity.InfoCard;
 import ua.kiev.supersergey.deputysearch.inputparser.json.util.JsonNodeUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by supersergey on 21.04.18.
@@ -33,16 +33,17 @@ public class DeclarationsDeserializer {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public Flux<InfoCard> deserializeDeclarations(byte[] rawContent) {
+    public List<InfoCard> deserializeDeclarations(byte[] rawContent) {
         try {
             JsonNode root = mapper.readTree(rawContent);
             JsonNode objectList = root.get("results").get("object_list");
-            List<InfoCard> result = JsonNodeUtils.isEmptyList(objectList) ?
+            return JsonNodeUtils.isEmptyList(objectList) ?
                     Collections.EMPTY_LIST :
                     infoCardListDeserializer.deserialize(objectList, mapper);
-            return Flux.fromIterable(result);
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input stream");
         }
     }
+
+
 }

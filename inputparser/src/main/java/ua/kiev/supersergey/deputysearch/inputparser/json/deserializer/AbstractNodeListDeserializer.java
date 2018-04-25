@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Created by supersergey on 22.04.18.
@@ -33,8 +34,6 @@ public abstract class AbstractNodeListDeserializer<T> {
         }
         return result;
     }
-
-
 
     public abstract T deserializeNode(JsonNode node, ObjectMapper mapper);
 }

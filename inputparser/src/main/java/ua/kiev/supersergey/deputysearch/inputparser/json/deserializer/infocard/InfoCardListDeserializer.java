@@ -11,7 +11,9 @@ import ua.kiev.supersergey.deputysearch.inputparser.entity.Company;
 import ua.kiev.supersergey.deputysearch.inputparser.entity.InfoCard;
 import ua.kiev.supersergey.deputysearch.inputparser.json.util.JsonNodeUtils;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by supersergey on 22.04.18.
@@ -28,19 +30,23 @@ public class InfoCardListDeserializer extends AbstractNodeListDeserializer<InfoC
 
     @Override
     public InfoCard deserializeNode(JsonNode node, ObjectMapper mapper) {
-        InfoCard result = new InfoCard();
         try {
             JsonNode infocard = node.get("infocard");
-            result = mapper.treeToValue(infocard, InfoCard.class);
+            final InfoCard result = mapper.treeToValue(infocard, InfoCard.class);
             log.info("Parsed infocard: " + result.toString());
             JsonNode companyNode = node.get("unified_source").get("step_9");
             if (!JsonNodeUtils.isEmptyList(companyNode)) {
-                List<Company> companies = companyListDeserializer.deserialize(companyNode, mapper);
+                List<Company> companies = companyListDeserializer
+                        .deserialize(companyNode, mapper)
+                        .stream().distinct().collect(Collectors.toList());
+                companies.forEach(i -> i.setInfoCard(result));
                 result.setCompanies(companies);
             }
+            result.setParsedDate(new Date());
+            return result;
         } catch (JsonProcessingException ex) {
             log.warn("Could not deserialize infocard json element: ", node.toString());
+            return new InfoCard();
         }
-        return result;
     }
 }

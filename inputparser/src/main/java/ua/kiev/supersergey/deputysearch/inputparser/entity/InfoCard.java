@@ -2,8 +2,7 @@ package ua.kiev.supersergey.deputysearch.inputparser.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,9 +15,11 @@ import java.util.List;
 /**
  * Created by supersergey on 20.04.18.
  */
-@Data
-@Entity
+@Entity(name = "info_card")
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode
 public class InfoCard {
     @Id
     private String id;
@@ -30,7 +31,21 @@ public class InfoCard {
     private String url;
     @JsonProperty("first_name")
     private String firstName;
+    private Date parsedDate;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "infoCard")
     List<Company> companies = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "InfoCard{" +
+                "id='" + id + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", createdDate=" + createdDate +
+                ", url='" + url + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", companies=" + companies +
+                '}';
+    }
 }
