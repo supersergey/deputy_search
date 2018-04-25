@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.inputparser.entity;
+package ua.kiev.supersergey.deputysearch.inputparser.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,7 +38,7 @@ public class InfoCard {
 
     @Override
     public String toString() {
-        return "InfoCard{" +
+        return "InfoCardJson{" +
                 "id='" + id + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", patronymic='" + patronymic + '\'' +

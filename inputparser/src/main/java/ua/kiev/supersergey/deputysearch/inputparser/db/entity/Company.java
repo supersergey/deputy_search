@@ -1,11 +1,10 @@
-package ua.kiev.supersergey.deputysearch.inputparser.entity;
+package ua.kiev.supersergey.deputysearch.inputparser.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Generated;
 
 import javax.persistence.*;
 
@@ -14,15 +13,14 @@ import javax.persistence.*;
  */
 @Entity(name = "company")
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class Company {
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @JsonIgnore
+    @Transient
+    private String infocardGuid;
     @ManyToOne
     @JoinColumn(name = "info_card")
     private InfoCard infoCard;
@@ -40,13 +38,5 @@ public class Company {
     @Override
     public int hashCode() {
         return name.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Company{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
     }
 }
