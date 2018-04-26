@@ -45,6 +45,7 @@ public class Deserializer {
                         });
                     }
                 });
+                fluxSink.complete();
             });
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input data, aborting");

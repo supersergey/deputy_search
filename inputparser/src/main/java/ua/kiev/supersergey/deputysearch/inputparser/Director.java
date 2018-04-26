@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Signal;
 import ua.kiev.supersergey.deputysearch.inputparser.converter.CompanyMapper;
 import ua.kiev.supersergey.deputysearch.inputparser.converter.InfocardMapper;
 import ua.kiev.supersergey.deputysearch.inputparser.db.entity.Company;
 import ua.kiev.supersergey.deputysearch.inputparser.db.entity.InfoCard;
-import ua.kiev.supersergey.deputysearch.inputparser.db.entity.helper.InfoCardCompanySetter;
 import ua.kiev.supersergey.deputysearch.inputparser.db.service.InfoCardService;
 import ua.kiev.supersergey.deputysearch.inputparser.json.deserializer.Deserializer;
 import ua.kiev.supersergey.deputysearch.inputparser.json.entity.CompanyJson;
@@ -19,10 +17,10 @@ import ua.kiev.supersergey.deputysearch.inputparser.json.filereader.JsonInputFil
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by supersergey on 26.04.18.
@@ -45,20 +43,27 @@ public class Director {
             URL resource = this.getClass().getClassLoader().getResource(fileName);
             byte[] rawJson = JsonInputFileReader.read(Paths.get(resource.getFile()));
             Flux<?> objects = deserializer.deserialize(rawJson);
-            Flux<InfoCard> infoCards = objects
+            Flux<InfoCard> infoCardFlux = objects
                     .filter(Objects::nonNull)
                     .filter(i -> i.getClass().equals(InfoCardJson.class))
-                    .map(i -> (InfoCardJson) i)
+                    .cast(InfoCardJson.class)
                     .map(InfocardMapper::toEntity);
-            Flux<Company> companies = objects
+            Flux<Company> companyFlux = objects
                     .filter(Objects::nonNull)
                     .filter(i -> i.getClass().equals(CompanyJson.class))
                     .distinct()
-                    .map(i -> (CompanyJson) i)
+                    .cast(CompanyJson.class)
                     .map(CompanyMapper::toEntity);
-            companies.subscribe(System.out::println);
-            System.out.println(companies.count().toString());
-
+            List<InfoCard> infoCards = infoCardFlux.collectList().block();
+            List<Company> companies = companyFlux.collectList().block();
+            infoCards.forEach(infoCard -> {
+                List<Company> relatedCompanies = companies.stream()
+                        .filter(c -> c.getInfocardGuid().equals(infoCard.getId())).collect(Collectors.toList());
+                relatedCompanies.forEach(rc -> rc.setInfoCard(infoCard));
+                infoCard.setCompanies(relatedCompanies);
+                infoCard.setCreatedDate(new Date());
+            });
+            infoCardService.saveAll(infoCards);
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input data", ex);
         }

@@ -38,6 +38,6 @@ public class InfoCardServiceImpl implements InfoCardService {
 
     @Override
     public void saveAll(List<InfoCard> infoCards) {
-        infoCards.forEach(this::save);
+        repository.saveAll(infoCards);
     }
 }
