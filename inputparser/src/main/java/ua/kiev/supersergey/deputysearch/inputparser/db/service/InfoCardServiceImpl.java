@@ -8,6 +8,7 @@ import ua.kiev.supersergey.deputysearch.inputparser.db.entity.InfoCard;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by supersergey on 23.04.18.
@@ -37,7 +38,9 @@ public class InfoCardServiceImpl implements InfoCardService {
     }
 
     @Override
-    public void saveAll(List<InfoCard> infoCards) {
-        repository.saveAll(infoCards);
+    public void saveAll(Stream<InfoCard> infoCards) {
+        infoCards.forEach(i -> {
+            repository.fin
+        });
     }
 }
