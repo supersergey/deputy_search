@@ -22,7 +22,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class InfoCard {
     @Id
-    private String id;
+    private String guid;
     @JsonProperty("last_name")
     private String lastName;
     private String patronymic;
@@ -39,7 +39,7 @@ public class InfoCard {
     @Override
     public String toString() {
         return "InfoCardJson{" +
-                "id='" + id + '\'' +
+                "guid='" + guid + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", patronymic='" + patronymic + '\'' +
                 ", createdDate=" + createdDate +

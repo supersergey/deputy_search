@@ -10,9 +10,6 @@ import java.util.stream.Stream;
  * Created by supersergey on 23.04.18.
  */
 public interface InfoCardService {
-    @Transactional
     InfoCard save(InfoCard infoCard);
-
-    @Transactional
-    void saveAll(Stream<InfoCard> infoCards);
+    void saveAll(List<InfoCard> infoCards);
 }

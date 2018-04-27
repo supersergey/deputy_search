@@ -10,7 +10,7 @@ CREATE TABLE info_card
   created_date DATETIME NOT NULL,
   parsed_date DATETIME NOT NULL
 );
-CREATE UNIQUE INDEX info_card_id_uindex ON info_card (id);
+CREATE UNIQUE INDEX info_card_id_uindex ON info_card (guid);
 CREATE TABLE company
 (
   id INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -18,6 +18,6 @@ CREATE TABLE company
   status VARCHAR(16),
   url VARCHAR(1024),
   info_card VARCHAR(128),
-  CONSTRAINT fk_info_card FOREIGN KEY (info_card) REFERENCES info_card (id)
+  CONSTRAINT fk_info_card FOREIGN KEY (info_card) REFERENCES info_card (guid)
 );
 CREATE INDEX fk_info_card ON company (info_card);

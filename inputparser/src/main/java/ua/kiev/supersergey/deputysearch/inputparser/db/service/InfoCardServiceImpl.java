@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.kiev.supersergey.deputysearch.inputparser.db.dao.InfoCardRepository;
+import ua.kiev.supersergey.deputysearch.inputparser.db.entity.Company;
 import ua.kiev.supersergey.deputysearch.inputparser.db.entity.InfoCard;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by supersergey on 23.04.18.
@@ -38,9 +39,25 @@ public class InfoCardServiceImpl implements InfoCardService {
     }
 
     @Override
-    public void saveAll(Stream<InfoCard> infoCards) {
-        infoCards.forEach(i -> {
-            repository.fin
-        });
+    @Transactional
+    public void saveAll(List<InfoCard> infoCards) {
+        infoCards.forEach(newInfoCard -> {
+                    Optional<InfoCard> existingInfoCard = repository.findById(newInfoCard.getGuid());
+                    if (existingInfoCard.isPresent()) {
+                        addNewCompaniesToExistingInfoCard(newInfoCard, existingInfoCard.get());
+                    } else {
+                        repository.save(newInfoCard);
+                    }
+                }
+            );
+        }
+
+    private void addNewCompaniesToExistingInfoCard(InfoCard newInfoCard, InfoCard existingInfoCard) {
+        List<Company> existingCompanies = existingInfoCard.getCompanies();
+        List<Company> newCompanies = newInfoCard.getCompanies().stream()
+                .filter(nic -> !existingCompanies.contains(nic))
+                .collect(Collectors.toList());
+        existingCompanies.addAll(newCompanies);
+        existingCompanies.forEach(c -> c.setInfoCard(existingInfoCard));
     }
 }

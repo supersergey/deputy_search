@@ -12,9 +12,9 @@ public class InfocardMapper {
         infoCard.setFirstName(infoCardJson.getFirstName());
         infoCard.setPatronymic(infoCardJson.getPatronymic());
         infoCard.setLastName(infoCardJson.getLastName());
-        infoCard.setId(infoCardJson.getGuid());
-        infoCard.setUrl(infoCard.getUrl());
-        infoCard.setParsedDate(infoCard.getParsedDate());
+        infoCard.setGuid(infoCardJson.getGuid());
+        infoCard.setUrl(infoCardJson.getUrl());
+        infoCard.setCreatedDate(infoCardJson.getCreatedDate());
         return infoCard;
     }
 }

@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toList;
@@ -24,13 +23,12 @@ public class Grouper {
         List<Company> companies = companyFlux.collectList().block();
         Map<String, List<String>> guidsByOwner = collectOwnerGuids(infoCards);
         Map<String, List<Company>> companiesByOwner = collectOwnerCompanies(companies, guidsByOwner);
-        infoCards.stream().filter(infoCards::contains).collect(toList())
-
 
         infoCards.forEach(i -> {
             String owner = joinOwnerName(i);
             i.setCompanies(companiesByOwner.get(owner));
             i.getCompanies().forEach(c -> c.setInfoCard(i));
+            i.setGuid(guidsByOwner.get(joinOwnerName(i)).get(0));
             i.setCreatedDate(new Date());
         });
         return infoCards;
@@ -50,10 +48,10 @@ public class Grouper {
     private static Map<String, List<String>> collectOwnerGuids(List<InfoCard> infoCards) {
         return infoCards.stream().collect(
                 Collectors.groupingBy(
-                        Grouper::joinOwnerName, Collectors.mapping(InfoCard::getId, toList())));
+                        Grouper::joinOwnerName, Collectors.mapping(InfoCard::getGuid, toList())));
     }
 
     private static String joinOwnerName(InfoCard infoCard) {
-        return String.join(" ", infoCard.getFirstName(), infoCard.getPatronymic(), infoCard.getLastName());
+        return String.join(";", infoCard.getFirstName(), infoCard.getPatronymic(), infoCard.getLastName());
     }
 }
