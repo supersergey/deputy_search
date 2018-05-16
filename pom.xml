@@ -8,6 +8,7 @@
     <artifactId>deputy-search</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
+        <module>commonlib</module>
         <module>inputparser</module>
         <module>searchengine</module>
     </modules>
