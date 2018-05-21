@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.*;
 import ua.kiev.supersergey.deputysearch.google_search_client.entity.Items;
 import ua.kiev.supersergey.deputysearch.google_search_client.entity.Item;
@@ -38,15 +39,15 @@ public class GoogleSearchClient extends AbstractHttpClientWithLogging {
     }
 
     public List<Item> searchByCompany(String companyName) {
+        log.info("Searching for the company: " + companyName);
         requestParams.put("query", companyName);
-        return
-                client.get()
+        List<Item> searchResult = client.get()
                 .uri(requestTemplate, requestParams)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve().bodyToMono(Items.class)
                 .log()
                 .block()
                 .getItems();
-
+        return CollectionUtils.isEmpty(searchResult) ? Collections.emptyList() : searchResult;
     }
 }

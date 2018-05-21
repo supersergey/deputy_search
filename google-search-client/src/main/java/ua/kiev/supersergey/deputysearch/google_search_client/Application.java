@@ -15,6 +15,7 @@ public class Application {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
         GoogleSearchDirector googleSearchDirector = context.getBean(GoogleSearchDirector.class);
+        googleSearchDirector.search();
         context.close();
     }
 }

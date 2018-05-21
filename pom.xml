@@ -28,6 +28,7 @@
         <lombok.version>1.16.20</lombok.version>
         <jackson-databind.version>2.9.5</jackson-databind.version>
         <jsoup.version>1.11.3</jsoup.version>
+        <mysql.version>8.0.11</mysql.version>
     </properties>
 
     <parent>

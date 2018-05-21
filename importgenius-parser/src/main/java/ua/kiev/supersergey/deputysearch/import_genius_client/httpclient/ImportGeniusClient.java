@@ -16,7 +16,7 @@ public class ImportGeniusClient {
         log.info("Fetching url: " + url);
         try {
             return Jsoup.connect(url).get();
-        }  catch (IOException ex) {
+        }  catch (Throwable ex) {
             log.error("Could not fetch URL: " + url, ex);
             throw new InvalidSearchResultException(ex);
         }

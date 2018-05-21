@@ -13,6 +13,6 @@ import java.util.List;
  */
 @Repository
 public interface CompanyRepository extends PagingAndSortingRepository<Company, Long>{
-    @Query(value = "select c from Company c where c.status is NULL and c.urlTimeStamp is NULL")
+    @Query(value = "select c from Company c where c.status is NULL")
     List<Company> findCompaniesUnprocessedByGoogle(Pageable pageable);
 }
