@@ -18,6 +18,11 @@
                 <th scope="col">Бенефициар</th>
                 <th scope="col">Компании</th>
                 <th scope="col">Импорт-экспорт</th>
+                <th scope="col">Recepient</th>
+                <th scope="col">Recepient Address</th>
+                <th scope="col">Sender</th>
+                <th scope="col">Sender Address</th>
+                <th scope="col">Link</th>
             </tr>
             </thead>
             <tbody>
@@ -28,6 +33,11 @@
                 searchResult.company.infoCard.firstName}"></td>
                 <td th:text="${searchResult.company.name}"></td>
                 <td th:text="${searchResult.freightDesc}"></td>
+                <td th:text="${searchResult.recepientName}"></td>
+                <td th:text="${searchResult.recepientAddress}"></td>
+                <td th:text="${searchResult.senderName}"></td>
+                <td th:text="${searchResult.senderAddress}"></td>
+                <td><a th:href="${searchResult.url}">Подробнее...</a></td>
             </tr>
             </tbody>
         </table>
