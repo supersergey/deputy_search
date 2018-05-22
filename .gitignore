@@ -54,3 +54,5 @@ fabric.properties
 .idea/httpRequests
 
 google.properties
+jqgrid/
+jquery_ui
