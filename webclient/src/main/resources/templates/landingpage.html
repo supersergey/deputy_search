@@ -26,8 +26,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="searchResult: ${searchResults}">
-                <td th:id="${searchResult.id}"></td>
+            <tr th:each="searchResult, count: ${searchResults}">
+                <td th:text="${count.count}"></td>
                 <td th:text="${searchResult.company.infoCard.lastName +  ' ' +
                 searchResult.company.infoCard.patronymic + ' ' +
                 searchResult.company.infoCard.firstName}"></td>
