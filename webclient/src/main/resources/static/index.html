@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>Deputy Search: explore companies</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="jquery-ui-smooth/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="jqgrid/css/ui.jqgrid.css" />
+
+    <script src="jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
+    <script src="jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div style="width: 80%;">
+    <h1>Deputy search results</h1>
+
+    <script>
+        jQuery().ready(function () {
+            jQuery("#list2").jqGrid({
+                url: '/grid',
+                datatype: "json",
+                colNames: ['Бенефициар', 'Компания', 'Операция', 'Получатель', 'Отправитель'],
+                colModel: [
+                    {name: 'beneficiary', index: 'beneficiary', search: true},
+                    {name: 'company', index: 'company', search: true},
+                    {name: 'freightDesc', index: 'freightDesc', search: true},
+                    {name: 'sender', index: 'sender', search: true},
+                    {name: 'recepient', index: 'recepient', search: true}
+                ],
+                rowNum: 30,
+                pager: '#pager2',
+                sortname: 'id',
+                viewrecords: true,
+                sortorder: "desc",
+                rownumbers: true,
+                height: "auto",
+                autowidth: true
+            })
+                .filterToolbar(
+                    {
+                        dataInit: function (elem) {
+                            $(elem).autocomplete({ source: '/autocomplete?elem=' + elem });
+                        }
+                    }
+                )
+                .navGrid('#pager1', {edit: false, add: false, del: false, search: true})
+            ;
+        });
+    </script>
+    <table id="list2"></table>
+    <div id="pager2"></div>
+</div>
+</body>
+</html>

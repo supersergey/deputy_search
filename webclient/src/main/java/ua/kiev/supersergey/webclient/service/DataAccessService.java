@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.CompanyRepository;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.InfoCardRepository;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.SearchResultsRepository;
+import ua.kiev.supersergey.deputysearch.commonlib.entity.InfoCard;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
+import ua.kiev.supersergey.webclient.contoller.SearchResultFilter;
 
+import javax.sql.rowset.Predicate;
 import java.util.List;
 
 /**
@@ -27,10 +31,40 @@ public class DataAccessService {
         this.companyRepository = companyRepository;
     }
 
+    public int fetchNonEmptySearchResultsCount() {
+        return searchResultsRepository.fetchNonEmptySearchResultsCount();
+    }
+
     @Transactional
-    public List<SearchResult> fetchNonEmptySearchResults(int page, int size) {
-        return searchResultsRepository.fetchNonEmptySearchResults(
-                PageRequest.of(page, size)
-        );
+    public List<SearchResult> fetchNonEmptySearchResults(SearchResultFilter searchResultFilter) {
+        SearchResultFilter.SearchCriteria searchCriteria = searchResultFilter.getSearchCriteria();
+        if (!searchCriteria.isSearchEnabled()
+                || searchCriteria.getSearchKey() == null
+                || StringUtils.isEmpty(searchCriteria.getSearchKey().getSecond())
+                ) {
+            return searchResultsRepository.fetchNonEmptySearchResults(preparePageRequest(searchResultFilter));
+        } else {
+            switch (searchCriteria.getSearchKey().getFirst()) {
+                case COMPANY:
+                case SENDER:
+                case RECEPIENT:
+                    return searchResultsRepository.fetchNonEmptySearchResults_SearchByCompany(
+                            preparePageRequest(searchResultFilter),
+                            searchResultFilter.getSearchCriteria().getSearchKey().getSecond());
+                case BENEFICIARY:
+                    return
+                case FREIGHT_DESC:
+                    break;
+                default:
+                    return null;
+            }
+        }
+        PathBuilder<InfoCard> entityPath = new PathBuilder<>(MyUser.class, "user");
+
+    }
+
+    private PageRequest preparePageRequest(SearchResultFilter searchResultFilter) {
+        return PageRequest.of
+                (searchResultFilter.getPage(), searchResultFilter.getSize(), searchResultFilter.getSort());
     }
 }
