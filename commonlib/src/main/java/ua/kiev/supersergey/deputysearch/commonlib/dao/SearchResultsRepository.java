@@ -13,7 +13,7 @@ import java.util.List;
  * Created by supersergey on 20.05.18.
  */
 @Repository
-public interface SearchResultsRepository extends PagingAndSortingRepository<SearchResult, Long>, QuerydslPredicateExecutor<InfoCardRepository> {
+public interface SearchResultsRepository extends PagingAndSortingRepository<SearchResult, Long> {
     String BASE_QUERY = "select sr from SearchResult sr where sr.status = 'PARSED_OK'";
 
     @Query(value = "select sr from SearchResult sr where sr.status is NULL")

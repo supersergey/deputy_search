@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.webclient.dto;
+package ua.kiev.supersergey.deputysearch.webclient.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +13,6 @@ import java.util.List;
 public class Response {
     private List<SearchResultDto> rows;
     private int page;
-    private int total;
-    private int records;
+    private long total;
+    private long records;
 }

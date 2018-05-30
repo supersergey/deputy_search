@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.webclient.dto;
+package ua.kiev.supersergey.deputysearch.webclient.dto;
 
 import lombok.Data;
 

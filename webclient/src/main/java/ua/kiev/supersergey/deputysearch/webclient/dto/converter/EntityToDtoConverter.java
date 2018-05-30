@@ -1,7 +1,7 @@
-package ua.kiev.supersergey.webclient.dto.converter;
+package ua.kiev.supersergey.deputysearch.webclient.dto.converter;
 
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
-import ua.kiev.supersergey.webclient.dto.SearchResultDto;
+import ua.kiev.supersergey.deputysearch.webclient.dto.SearchResultDto;
 
 /**
  * Created by supersergey on 22.05.18.

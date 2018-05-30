@@ -1,6 +1,7 @@
-package ua.kiev.supersergey.webclient.contoller;
+package ua.kiev.supersergey.deputysearch.commonlib.entity.filter;
 
 public enum DataColumn {
+    ID("id", "id"),
     BENEFICIARY("beneficiary", "company.infoCard.lastName"),
     COMPANY("company", "company.name"),
     FREIGHT_DESC("freightDesc", "freightDesc"),
@@ -25,7 +26,7 @@ public enum DataColumn {
 
     public static DataColumn findByWebName(String webName) {
         for (DataColumn dc : DataColumn.values()) {
-            if (webName.equalsIgnoreCase(dc.getDbName())) {
+            if (webName.equalsIgnoreCase(dc.getWebName())) {
                 return dc;
             }
         }
