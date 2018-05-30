@@ -10,7 +10,7 @@ public class SearchResultDto {
     private String beneficiary;
     private String beneficiaryId;
     private String company;
-    private long companyId;
+    private String companyUuid;
     private String freightDesc;
     private String sender;
     private String recepient;

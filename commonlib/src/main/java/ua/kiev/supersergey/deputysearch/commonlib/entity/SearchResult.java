@@ -41,7 +41,7 @@ public class SearchResult {
     @Column(name = "error_message")
     private String errorMessage;
     @ManyToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_uuid")
     private Company company;
 
     @Override

@@ -47,18 +47,7 @@ public class LandingPageController {
                 .rows(resultDtos)
                 .page(searchResultFilter.getPage())
                 .records(totalNumberOfRecords)
-                .total(calculateNumOfPages(resultDtos, totalNumberOfRecords))
+                .total(totalNumberOfRecords / searchResultFilter.getSize() + 1)
                 .build();
-    }
-
-    private long calculateNumOfPages(List<SearchResultDto> resultDtos, long totalNumberOfRecords) {
-        if (CollectionUtils.isEmpty(resultDtos)) {
-            return 0;
-        }
-        if (totalNumberOfRecords % resultDtos.size() == 0) {
-            return totalNumberOfRecords / resultDtos.size();
-        } else {
-            return totalNumberOfRecords / resultDtos.size() + 1;
-        }
     }
 }

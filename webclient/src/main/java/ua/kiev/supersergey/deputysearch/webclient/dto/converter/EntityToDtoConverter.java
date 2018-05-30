@@ -3,6 +3,8 @@ package ua.kiev.supersergey.deputysearch.webclient.dto.converter;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
 import ua.kiev.supersergey.deputysearch.webclient.dto.SearchResultDto;
 
+import java.util.stream.Collectors;
+
 /**
  * Created by supersergey on 22.05.18.
  */
@@ -12,14 +14,15 @@ public class EntityToDtoConverter {
         if (searchResult == null) {
             return result;
         }
-        result.setBeneficiary(String.join(" ",
-                searchResult.getCompany().getInfoCard().getLastName(),
-                searchResult.getCompany().getInfoCard().getFirstName(),
-                searchResult.getCompany().getInfoCard().getPatronymic()
-        ));
-        result.setBeneficiaryId(searchResult.getCompany().getInfoCard().getGuid());
+        result.setBeneficiary(
+                searchResult.getCompany().getInfoCards()
+                .stream()
+                .map(
+                        ic -> String.join(" ", ic.getLastName(), ic.getFirstName(), ic.getPatronymic()))
+                .collect(Collectors.joining(", "))
+        ); // todo add urls
         result.setCompany(searchResult.getCompany().getName());
-        result.setCompanyId(searchResult.getCompany().getId());
+        result.setCompanyUuid(searchResult.getCompany().getUuid());
         result.setRecepient(String.join("\n",
                 searchResult.getRecepientName(),
                 searchResult.getRecepientAddress()));

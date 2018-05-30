@@ -16,8 +16,8 @@ import java.util.List;
 @Data
 public class Company {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "uuid")
+    private String uuid;
     @Column(name = "name")
     private String name;
     @Transient
@@ -27,9 +27,13 @@ public class Company {
     private CompanyStatus status;
     @Column(name = "url_time_stamp")
     private Date urlTimeStamp;
-    @ManyToOne
-    @JoinColumn(name = "info_card")
-    private InfoCard infoCard;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinTable(
+            name = "infocard_company",
+            joinColumns = {@JoinColumn(name = "company_uuid")},
+            inverseJoinColumns = {@JoinColumn(name = "infocard_guid")}
+    )
+    private List<InfoCard> infoCards;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<SearchResult> searchResults;
 
@@ -51,7 +55,7 @@ public class Company {
     @Override
     public String toString() {
         return "Company{" +
-                "id=" + id +
+                "uuid=" + uuid +
                 ", name='" + name + '\'' +
                 ", infocardGuid='" + infocardGuid + '\'' +
                 ", status=" + status +

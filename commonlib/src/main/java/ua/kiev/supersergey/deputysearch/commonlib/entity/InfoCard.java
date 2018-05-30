@@ -29,7 +29,7 @@ public class InfoCard {
     private String firstName;
     private Date parsedDate;
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "infoCard")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "infoCards")
     List<Company> companies = new ArrayList<>();
 
     @Override
