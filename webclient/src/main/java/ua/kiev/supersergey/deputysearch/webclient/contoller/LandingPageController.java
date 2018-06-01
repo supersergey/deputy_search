@@ -2,10 +2,9 @@ package ua.kiev.supersergey.deputysearch.webclient.contoller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-import ua.kiev.supersergey.deputysearch.commonlib.entity.filter.SearchResultFilter;
-import ua.kiev.supersergey.deputysearch.webclient.contoller.helper.LandingPageControllerHelper;
+import ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder.SearchResultFilter;
+import ua.kiev.supersergey.deputysearch.webclient.contoller.helper.UiRequestDecoder;
 import ua.kiev.supersergey.deputysearch.webclient.dto.Response;
 import ua.kiev.supersergey.deputysearch.webclient.dto.SearchResultDto;
 import ua.kiev.supersergey.deputysearch.webclient.dto.converter.EntityToDtoConverter;
@@ -37,7 +36,7 @@ public class LandingPageController {
     public Response fetchGridData(
             @RequestParam Map<String, String> params
             ) {
-        SearchResultFilter searchResultFilter = LandingPageControllerHelper.decodeParams(params);
+        SearchResultFilter searchResultFilter = UiRequestDecoder.decodeParams(params);
         List<SearchResultDto> resultDtos = dataAccessService
                 .fetchNonEmptySearchResults(searchResultFilter)
                 .map(EntityToDtoConverter::toDto)

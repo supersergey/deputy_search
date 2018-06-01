@@ -3,10 +3,9 @@ package ua.kiev.supersergey.deputysearch.webclient.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.kiev.supersergey.deputysearch.commonlib.dao.SearchResultsRepository;
-import ua.kiev.supersergey.deputysearch.commonlib.dao.SearchResultsRepositoryJpa;
-import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
-import ua.kiev.supersergey.deputysearch.commonlib.entity.filter.SearchResultFilter;
+import ua.kiev.supersergey.deputysearch.webclient.dao.SearchResultsRepositoryJpa;
+import ua.kiev.supersergey.deputysearch.webclient.dao.entity.SearchResultQueryResult;
+import ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder.SearchResultFilter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,15 +16,13 @@ import java.util.stream.Stream;
  */
 @Service
 public class DataAccessService {
-    private SearchResultsRepository searchResultsRepository;
     private SearchResultsRepositoryJpa searchResultsRepositoryJpa;
 
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public DataAccessService(SearchResultsRepository searchResultsRepository, SearchResultsRepositoryJpa searchResultsRepositoryJpa) {
-        this.searchResultsRepository = searchResultsRepository;
+    public DataAccessService(SearchResultsRepositoryJpa searchResultsRepositoryJpa) {
         this.searchResultsRepositoryJpa = searchResultsRepositoryJpa;
     }
 
@@ -34,7 +31,7 @@ public class DataAccessService {
     }
 
     @Transactional
-    public Stream<SearchResult> fetchNonEmptySearchResults(SearchResultFilter searchResultFilter) {
+    public Stream<SearchResultQueryResult> fetchNonEmptySearchResults(SearchResultFilter searchResultFilter) {
         return searchResultsRepositoryJpa.fetchDataBySearchFilter(searchResultFilter);
     }
 }

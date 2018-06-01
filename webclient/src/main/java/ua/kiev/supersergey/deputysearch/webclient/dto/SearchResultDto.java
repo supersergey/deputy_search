@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class SearchResultDto {
     private String beneficiary;
-    private String beneficiaryId;
+    private String beneficiaryGuid;
     private String company;
     private String companyUuid;
     private String freightDesc;

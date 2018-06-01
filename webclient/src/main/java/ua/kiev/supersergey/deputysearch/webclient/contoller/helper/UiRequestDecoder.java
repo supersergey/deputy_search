@@ -2,8 +2,8 @@ package ua.kiev.supersergey.deputysearch.webclient.contoller.helper;
 
 import org.springframework.data.util.Pair;
 import org.springframework.util.CollectionUtils;
-import ua.kiev.supersergey.deputysearch.commonlib.entity.filter.DataColumn;
-import ua.kiev.supersergey.deputysearch.commonlib.entity.filter.SearchResultFilter;
+import ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder.DataColumn;
+import ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder.SearchResultFilter;
 import ua.kiev.supersergey.deputysearch.webclient.exception.InvalidDataColumnException;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LandingPageControllerHelper {
+public class UiRequestDecoder {
     public static SearchResultFilter decodeParams(Map<String, String> params) {
         return SearchResultFilter.builder()
                 .page(parsePage(params))
@@ -38,6 +38,9 @@ public class LandingPageControllerHelper {
                 DataColumn dc = Optional
                         .ofNullable(DataColumn.findByWebName(params.get("sidx")))
                         .orElseThrow(() -> new InvalidDataColumnException("sidx"));
+                if (dc == DataColumn.ID) {
+                    throw new InvalidDataColumnException("id");
+                }
                 SearchResultFilter.SortDirection direction = Optional
                         .ofNullable(parseSortDirection(params))
                         .orElseThrow(() -> new InvalidDataColumnException("sord"));

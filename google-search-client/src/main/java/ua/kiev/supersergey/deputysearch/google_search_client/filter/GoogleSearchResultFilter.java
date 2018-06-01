@@ -9,6 +9,8 @@ import java.util.function.Predicate;
  */
 public class GoogleSearchResultFilter {
     public static Predicate<Item> suppliersOnly() {
-        return item -> item != null && item.getLink().contains("/suppliers/");
+        return item -> item != null &&
+                (item.getLink().matches("^.*(suppliers|exporters|importers|buyers).*$"));
+
     }
 }

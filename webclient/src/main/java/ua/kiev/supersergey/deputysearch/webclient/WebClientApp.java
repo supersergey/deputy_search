@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages =
         "ua.kiev.supersergey.deputysearch.commonlib.dao")
 @EntityScan(basePackages =
-        "ua.kiev.supersergey.deputysearch.commonlib.entity")
+        {"ua.kiev.supersergey.deputysearch.webclient",
+        "ua.kiev.supersergey.deputysearch.commonlib.entity"})
 @ComponentScan(basePackages = {"ua.kiev.supersergey.deputysearch.commonlib.dao",
         "ua.kiev.supersergey.deputysearch.commonlib.entity",
         "ua.kiev.supersergey.deputysearch.webclient"})

@@ -30,7 +30,7 @@ public class InfoCardServiceImpl implements InfoCardService {
         Iterable<InfoCard> entries = repository.findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(newEntry.getFirstName(), newEntry.getPatronymic(), newEntry.getLastName());
         if (entries.iterator().hasNext()) {
             InfoCard existingEntry = entries.iterator().next();
-            newEntry.getCompanies().forEach(i -> i.setInfoCard(existingEntry));
+//            newEntry.getCompanies().forEach(i -> i.setInfoCard(existingEntry));
             existingEntry.getCompanies().addAll(newEntry.getCompanies().stream().filter(i -> !existingEntry.getCompanies().contains(i)).collect(Collectors.toList()));
             return existingEntry;
         } else {
@@ -58,6 +58,6 @@ public class InfoCardServiceImpl implements InfoCardService {
                 .filter(nic -> !existingCompanies.contains(nic))
                 .collect(Collectors.toList());
         existingCompanies.addAll(newCompanies);
-        existingCompanies.forEach(c -> c.setInfoCard(existingInfoCard));
+//        existingCompanies.forEach(c -> c.setInfoCard(existingInfoCard));
     }
 }

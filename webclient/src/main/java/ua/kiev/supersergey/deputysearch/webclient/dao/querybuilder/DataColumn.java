@@ -1,12 +1,12 @@
-package ua.kiev.supersergey.deputysearch.commonlib.entity.filter;
+package ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder;
 
 public enum DataColumn {
     ID("id", "id"),
-    BENEFICIARY("beneficiary", "company.infoCard.lastName"),
-    COMPANY("company", "company.name"),
-    FREIGHT_DESC("freightDesc", "freightDesc"),
-    SENDER("sedner", "senderName"),
-    RECEPIENT("recepient", "recepientName");
+    BENEFICIARY("beneficiary", "ic.last_name"),
+    COMPANY("company", "c.name"),
+    FREIGHT_DESC("freightDesc", "sr.freight_desc"),
+    SENDER("sedner", "sr.sender_name"),
+    RECEPIENT("recepient", "sr.recepient_name");
 
     private String webName;
     private String dbName;

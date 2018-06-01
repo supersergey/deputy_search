@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.commonlib.entity.filter;
+package ua.kiev.supersergey.deputysearch.webclient.dao.querybuilder;
 
 import lombok.Builder;
 import lombok.Data;
