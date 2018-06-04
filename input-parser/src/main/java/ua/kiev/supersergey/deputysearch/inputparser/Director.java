@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.InfoCard;
 import ua.kiev.supersergey.deputysearch.inputparser.converter.InfocardMapper;
-import ua.kiev.supersergey.deputysearch.inputparser.db.grouper.Grouper;
+import ua.kiev.supersergey.deputysearch.inputparser.db.grouper.InfoCardCompanyMatcher;
 import ua.kiev.supersergey.deputysearch.inputparser.json.deserializer.Deserializer;
 import ua.kiev.supersergey.deputysearch.inputparser.json.entity.CompanyJson;
 import ua.kiev.supersergey.deputysearch.inputparser.json.entity.InfoCardJson;
@@ -43,13 +43,13 @@ public class Director {
             Flux<?> objects = deserializer.deserialize(rawJson);
             Flux<InfoCard> infoCardsFlux = getInfoCardsFlux(objects);
             Flux<Company> companiesFlux = getCompaniesFlux(objects);
-            infoCardService.saveAll(Grouper.group(infoCardsFlux, companiesFlux));
+            infoCardService.saveAll(InfoCardCompanyMatcher.match(infoCardsFlux, companiesFlux));
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read input data", ex);
         }
     }
 
-    private Flux<Company> getCompaniesFlux(Flux<?> objects) {
+    protected Flux<Company> getCompaniesFlux(Flux<?> objects) {
         return objects
                         .filter(Objects::nonNull)
                         .filter(i -> i.getClass().equals(CompanyJson.class))
@@ -58,7 +58,7 @@ public class Director {
                         .map(CompanyMapper::toEntity);
     }
 
-    private Flux<InfoCard> getInfoCardsFlux(Flux<?> objects) {
+    protected Flux<InfoCard> getInfoCardsFlux(Flux<?> objects) {
         return objects
                         .filter(Objects::nonNull)
                         .filter(i -> i.getClass().equals(InfoCardJson.class))

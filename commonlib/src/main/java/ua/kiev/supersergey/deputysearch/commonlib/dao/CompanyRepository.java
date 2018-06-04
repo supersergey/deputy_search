@@ -15,4 +15,6 @@ import java.util.List;
 public interface CompanyRepository extends PagingAndSortingRepository<Company, Long>{
     @Query(value = "select c from Company c where c.status is NULL")
     List<Company> findCompaniesUnprocessedByGoogle(Pageable pageable);
+    @Query
+    List<Company> findCompanyByName(String name);
 }

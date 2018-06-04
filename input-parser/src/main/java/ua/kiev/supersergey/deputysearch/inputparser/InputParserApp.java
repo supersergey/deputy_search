@@ -11,9 +11,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @SpringBootApplication
 @EnableJpaRepositories(basePackages =
-        "ua.kiev.supersergey.deputysearch.import_genius_client.deputysearch.commonlib.dao")
+        "ua.kiev.supersergey.deputysearch.commonlib.dao")
 @EntityScan(basePackages =
-        "ua.kiev.supersergey.deputysearch.import_genius_client.deputysearch.commonlib.entity")
+        "ua.kiev.supersergey.deputysearch.commonlib.entity")
 public class InputParserApp {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(InputParserApp.class, args);
