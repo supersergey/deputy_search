@@ -13,6 +13,10 @@ import java.util.*;
  */
 @Entity
 @Table(name = "info_card")
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class InfoCard {
     @Id
     private String guid;
@@ -28,21 +32,6 @@ public class InfoCard {
     @JsonProperty("first_name")
     private String firstName;
     private Date parsedDate;
-
-    public InfoCard() {
-    }
-
-    public InfoCard(String guid, String lastName, String patronymic, Date createdDate, String url, String firstName, Date parsedDate, Set<Company> companies) {
-        this.guid = guid;
-        this.lastName = lastName;
-        this.patronymic = patronymic;
-        this.createdDate = createdDate;
-        this.url = url;
-        this.firstName = firstName;
-        this.parsedDate = parsedDate;
-        this.companies = companies;
-    }
-
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -50,82 +39,6 @@ public class InfoCard {
             joinColumns = {@JoinColumn(name = "infocard_guid")},
             inverseJoinColumns = {@JoinColumn(name = "company_uuid")}
     )
+    @Builder.Default
     private Set<Company> companies = new HashSet<>();
-
-    public String getGuid() {
-        return guid;
-    }
-
-    public void setGuid(String guid) {
-        this.guid = guid;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPatronymic() {
-        return patronymic;
-    }
-
-    public void setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public Date getParsedDate() {
-        return parsedDate;
-    }
-
-    public void setParsedDate(Date parsedDate) {
-        this.parsedDate = parsedDate;
-    }
-
-    public Set<Company> getCompanies() {
-        return companies;
-    }
-
-    public void setCompanies(Set<Company> companies) {
-        this.companies = companies;
-    }
-
-    @Override
-    public String toString() {
-        return "InfoCard{" +
-                "guid='" + guid + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", createdDate=" + createdDate +
-                ", url='" + url + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", companies=" + companies +
-                '}';
-    }
 }

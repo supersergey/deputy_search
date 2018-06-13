@@ -38,29 +38,38 @@ public class InfoCardServiceImpl_v2Test {
     private CompanyRepository companyRepository;
 
     @Test
-    @Transactional
     public void testSimpleSave() {
-        InfoCard ic = new InfoCard();
-        ic.setGuid(UUID.randomUUID().toString());
-        ic.setFirstName("1");
-        ic.setPatronymic("1");
-        ic.setLastName("1");
-
-        Company c = new Company();
-        c.setName("ABCD");
-        c.setUrlTimeStamp(new Date());
-//        c.getInfoCards().add(ic);
+        InfoCard ic = createInfoCard("1", "1", "1");
+        Company c = createCompany("ABCD");
         ic.getCompanies().add(c);
         System.out.println(ic.getCompanies().iterator().next().getName());
 
+        infoCardService.save(ic);
 
-        infoCardRepository.save(ic);
+//        Iterable<InfoCard> infocards = infoCardService.findByFirstNamePatroNymicLastName(ic.getFirstName(), ic.getPatronymic(), ic.getLastName());
+//        assertTrue(infocards.iterator().hasNext());
+//        assertEquals(1, infocards.iterator().next().getCompanies().size());
+//        assertEquals("ABCD", infocards.iterator().next().getCompanies().iterator().next().getName());
+//
+//        InfoCard ic2 = createInfoCard("1", "1", "1");
+//        Company c2 = createCompany("ABCD");
+//        ic2.getCompanies().add(c2);
+//        infoCardService.save(ic2);
+    }
 
-//        companyRepository.save(c1);
-        Iterable<InfoCard> infocards = infoCardRepository.findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(ic.getFirstName(), ic.getPatronymic(), ic.getLastName());
-        assertTrue(infocards.iterator().hasNext());
-        assertEquals(1, infocards.iterator().next().getCompanies().size());
-        assertEquals("ABCD", infocards.iterator().next().getCompanies().iterator().next().getName());
+    private Company createCompany(String name) {
+        return Company.builder()
+                    .name(name)
+                    .build();
+    }
+
+    private InfoCard createInfoCard(String firstName, String patronymic, String lastName) {
+        return InfoCard.builder()
+                    .guid(UUID.randomUUID().toString())
+                    .firstName(firstName)
+                    .patronymic(patronymic)
+                    .lastName(lastName)
+                    .build();
     }
 
 

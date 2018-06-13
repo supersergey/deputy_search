@@ -9,5 +9,6 @@ import java.util.List;
  */
 public interface InfoCardService {
     InfoCard save(InfoCard infoCard);
+    Iterable<InfoCard> findByFirstNamePatroNymicLastName(String firstName, String patronymic, String lastName);
     void saveAll(List<InfoCard> infoCards);
 }

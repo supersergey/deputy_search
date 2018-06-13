@@ -8,13 +8,12 @@ import ua.kiev.supersergey.deputysearch.inputparser.json.entity.InfoCardJson;
  */
 public class InfocardMapper {
     public static InfoCard toEntity(InfoCardJson infoCardJson) {
-        InfoCard infoCard = new InfoCard();
-        infoCard.setFirstName(infoCardJson.getFirstName());
-        infoCard.setPatronymic(infoCardJson.getPatronymic());
-        infoCard.setLastName(infoCardJson.getLastName());
-        infoCard.setGuid(infoCardJson.getGuid());
-        infoCard.setUrl(infoCardJson.getUrl());
-        infoCard.setCreatedDate(infoCardJson.getCreatedDate());
-        return infoCard;
+        return InfoCard.builder()
+                .firstName(infoCardJson.getFirstName())
+                .patronymic(infoCardJson.getPatronymic())
+                .lastName(infoCardJson.getLastName())
+                .guid(infoCardJson.getGuid())
+                .url(infoCardJson.getUrl())
+                .build();
     }
 }

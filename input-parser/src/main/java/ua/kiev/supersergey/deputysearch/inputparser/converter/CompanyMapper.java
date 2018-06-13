@@ -8,9 +8,9 @@ import ua.kiev.supersergey.deputysearch.inputparser.json.entity.CompanyJson;
  */
 public class CompanyMapper {
     public static Company toEntity(CompanyJson companyJson) {
-        Company company = new Company();
-        company.setName(companyJson.getName());
-        company.setInfocardGuid(companyJson.getGuid());
-        return company;
+        return Company.builder()
+                .name(companyJson.getName())
+                .infocardGuid(companyJson.getGuid())
+                .build();
     }
 }

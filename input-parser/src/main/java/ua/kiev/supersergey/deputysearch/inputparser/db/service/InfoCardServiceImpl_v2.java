@@ -27,9 +27,10 @@ public class InfoCardServiceImpl_v2 implements InfoCardService {
     @Override
     @Transactional
     public InfoCard save(InfoCard newInfoCard) {
-        Iterable<InfoCard> existingInfoCards = icRepository.findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(
-                newInfoCard.getFirstName(), newInfoCard.getPatronymic(), newInfoCard.getLastName()
-        );
+        icRepository.save(newInfoCard);
+//        Iterable<InfoCard> existingInfoCards = icRepository.findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(
+//                newInfoCard.getFirstName(), newInfoCard.getPatronymic(), newInfoCard.getLastName()
+//        );
 //        if (existingInfoCards.iterator().hasNext()) {
 //            InfoCard existingInfoCard = existingInfoCards.iterator().next();
 ////            List<Company> existingCompanies = existingInfoCard.getCompanies();
@@ -58,6 +59,11 @@ public class InfoCardServiceImpl_v2 implements InfoCardService {
 //            return newInfoCard;
 //        }
         return null;
+    }
+
+    @Override
+    public Iterable<InfoCard> findByFirstNamePatroNymicLastName(String firstName, String patronymic, String lastName) {
+        return icRepository.findInfoCardByFirstNameIgnoreCaseAndPatronymicIgnoreCaseAndLastNameIgnoreCase(firstName, patronymic, lastName);
     }
 
     @Override
