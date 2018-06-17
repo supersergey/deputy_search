@@ -20,17 +20,18 @@ import java.util.*;
 public class InfoCard {
     @Id
     private String guid;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("patronymic")
+    private String patronymic;
     @JsonProperty("last_name")
     private String lastName;
-    private String patronymic;
     @JsonProperty("created_date")
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", updatable = false)
     private Date createdDate;
     private String url;
-    @JsonProperty("first_name")
-    private String firstName;
     private Date parsedDate;
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -40,5 +41,5 @@ public class InfoCard {
             inverseJoinColumns = {@JoinColumn(name = "company_uuid")}
     )
     @Builder.Default
-    private Set<Company> companies = new HashSet<>();
+    private List<Company> companies = new ArrayList<>();
 }

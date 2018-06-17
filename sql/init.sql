@@ -1,69 +1,81 @@
-CREATE TABLE company
+create table company
 (
-  uuid           VARCHAR(64)  NOT NULL
-    PRIMARY KEY,
-  name           VARCHAR(512) NULL,
-  status         VARCHAR(16)  NULL,
-  url_time_stamp DATETIME     NULL
+  uuid varchar(64) not null
+    primary key,
+  name varchar(512) not null,
+  status varchar(16) null,
+  url_time_stamp datetime null,
+  constraint company_name_uindex
+  unique (name)
 )
-  ENGINE = InnoDB;
+  engine=InnoDB
+;
 
-CREATE INDEX company_uuid_index
-  ON company (uuid);
+create index company_uuid_index
+  on company (uuid)
+;
 
-CREATE TABLE info_card
+create table info_card
 (
-  guid         VARCHAR(128)  NOT NULL
-    PRIMARY KEY,
-  first_name   VARCHAR(64)   NOT NULL,
-  last_name    VARCHAR(64)   NOT NULL,
-  patronymic   VARCHAR(64)   NULL,
-  url          VARCHAR(1024) NULL,
-  created_date DATETIME      NOT NULL,
-  parsed_date  DATETIME      NULL,
-  CONSTRAINT info_card_id_uindex
-  UNIQUE (guid)
+  guid varchar(128) not null
+    primary key,
+  first_name varchar(64) not null,
+  last_name varchar(64) not null,
+  patronymic varchar(64) not null,
+  url varchar(1024) null,
+  created_date datetime not null,
+  parsed_date datetime null,
+  constraint info_card_id_uindex
+  unique (guid),
+  constraint uq_owner
+  unique (first_name, patronymic, last_name)
 )
-  ENGINE = InnoDB;
+  engine=InnoDB
+;
 
-CREATE TABLE infocard_company
+create table infocard_company
 (
-  infocard_guid VARCHAR(128) NULL,
-  company_uuid  VARCHAR(64)  NULL,
-  CONSTRAINT infocard_company_info_card_guid_fk
-  FOREIGN KEY (infocard_guid) REFERENCES info_card (guid),
-  CONSTRAINT infocard_company_company_uuid_fk
-  FOREIGN KEY (company_uuid) REFERENCES company (uuid)
+  infocard_guid varchar(128) null,
+  company_uuid varchar(64) null,
+  constraint infocard_company_info_card_guid_fk
+  foreign key (infocard_guid) references info_card (guid),
+  constraint infocard_company_company_uuid_fk
+  foreign key (company_uuid) references company (uuid)
 )
-  ENGINE = InnoDB;
+  engine=InnoDB
+;
 
-CREATE INDEX infocard_company_info_card_guid_fk
-  ON infocard_company (infocard_guid);
+create index infocard_company_info_card_guid_fk
+  on infocard_company (infocard_guid)
+;
 
-CREATE INDEX infocard_company_company_uuid_fk
-  ON infocard_company (company_uuid);
+create index infocard_company_company_uuid_fk
+  on infocard_company (company_uuid)
+;
 
-CREATE TABLE search_results
+create table search_results
 (
-  id                INT AUTO_INCREMENT
-    PRIMARY KEY,
-  recepient_name    VARCHAR(128)  NULL,
-  recepient_address VARCHAR(128)  NULL,
-  sender_name       VARCHAR(128)  NULL,
-  sender_address    VARCHAR(128)  NULL,
-  freight_desc      TEXT          NULL,
-  url               VARCHAR(1024) NULL,
-  parse_time_stamp  DATETIME      NULL,
-  status            VARCHAR(16)   NULL,
-  error_message     TEXT          NULL,
-  company_uuid      VARCHAR(64)   NULL,
-  CONSTRAINT search_results_id_uindex
-  UNIQUE (id),
-  CONSTRAINT search_results_company_uuid_fk
-  FOREIGN KEY (company_uuid) REFERENCES company (uuid)
+  id int auto_increment
+    primary key,
+  recepient_name varchar(128) null,
+  recepient_address varchar(128) null,
+  sender_name varchar(128) null,
+  sender_address varchar(128) null,
+  freight_desc text null,
+  url varchar(1024) null,
+  parse_time_stamp datetime null,
+  status varchar(16) null,
+  error_message text null,
+  company_uuid varchar(64) null,
+  constraint search_results_id_uindex
+  unique (id),
+  constraint search_results_company_uuid_fk
+  foreign key (company_uuid) references company (uuid)
 )
-  ENGINE = InnoDB;
+  engine=InnoDB
+;
 
-CREATE INDEX search_results_company_uuid_fk
-  ON search_results (company_uuid);
+create index search_results_company_uuid_fk
+  on search_results (company_uuid)
+;
 

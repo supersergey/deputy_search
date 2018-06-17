@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by supersergey on 17.05.18.
@@ -16,5 +17,7 @@ public interface CompanyRepository extends PagingAndSortingRepository<Company, L
     @Query(value = "select c from Company c where c.status is NULL")
     List<Company> findCompaniesUnprocessedByGoogle(Pageable pageable);
     @Query
-    List<Company> findCompanyByName(String name);
+    Company findFirstByNameIgnoreCase(String name);
+    @Query
+    List<Company> findByNameIn(Set<String> names);
 }

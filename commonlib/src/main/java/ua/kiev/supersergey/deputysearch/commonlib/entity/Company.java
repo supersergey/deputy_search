@@ -35,9 +35,9 @@ public class Company {
     private CompanyStatus status;
     @Column(name = "url_time_stamp")
     private Date urlTimeStamp;
-    @ManyToMany(mappedBy = "companies", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "companies")
     @Builder.Default
-    private Set<InfoCard> infoCards = new HashSet<>();
+    private List<InfoCard> infoCards = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     @Builder.Default
     private List<SearchResult> searchResults = new ArrayList<>();
@@ -50,7 +50,6 @@ public class Company {
                 ", infocardGuid='" + infocardGuid + '\'' +
                 ", status=" + status +
                 ", urlTimeStamp=" + urlTimeStamp +
-                ", infoCards=" + infoCards +
                 '}';
     }
 }

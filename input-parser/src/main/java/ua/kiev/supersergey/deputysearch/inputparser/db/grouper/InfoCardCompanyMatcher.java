@@ -17,18 +17,16 @@ import static java.util.stream.Collectors.toList;
  * Collects and matches infocards and companies together by infocard guid
  */
 public class InfoCardCompanyMatcher {
-
     public static List<InfoCard> match(Flux<InfoCard> infoCardFlux, Flux<Company> companyFlux) {
         List<InfoCard> infoCards = infoCardFlux.collectList().block();
         List<Company> companies = companyFlux.collectList().block();
-//        infoCards.forEach(ic -> {
-//            ic.setCompanies(
-//                    companies.stream()
-//                            .filter(c -> ic.getGuid().equals(c.getInfocardGuid()))
-//                            .collect(toList())
-//            );
-//            ic.getCompanies().forEach(c -> c.getInfoCards().add(ic));
-//        });
+        infoCards.forEach(ic -> {
+            ic.setCompanies(
+                    companies.stream()
+                            .filter(c -> ic.getGuid().equals(c.getInfocardGuid()))
+                            .collect(toList())
+            );
+        });
         return infoCards;
     }
 }
