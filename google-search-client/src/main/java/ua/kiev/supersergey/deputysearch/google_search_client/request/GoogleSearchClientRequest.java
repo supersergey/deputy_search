@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.google_search_client;
+package ua.kiev.supersergey.deputysearch.google_search_client.request;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +33,7 @@ public class GoogleSearchClientRequest {
             requestParams.put("cx", cx);
             requestParams.put("key", apiKey);
             requestParams.put("query", "\"" + companyName + "\"");
+            requestParams.put("exactTerms", "\"" + companyName + "\"");
             return requestParams;
         }
     };

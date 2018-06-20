@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.*;
-import ua.kiev.supersergey.deputysearch.google_search_client.GoogleSearchClientRequest;
+import ua.kiev.supersergey.deputysearch.google_search_client.request.GoogleSearchClientRequest;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.GoogleSearchEngineResponse;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.Item;
 

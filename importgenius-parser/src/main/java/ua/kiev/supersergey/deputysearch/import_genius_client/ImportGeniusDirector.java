@@ -14,6 +14,7 @@ import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResultStatus;
 import ua.kiev.supersergey.deputysearch.import_genius_client.parser.ImportGeniusPageParser;
 import ua.kiev.supersergey.deputysearch.import_genius_client.exception.InvalidSearchResultException;
 import ua.kiev.supersergey.deputysearch.import_genius_client.httpclient.ImportGeniusClient;
+import ua.kiev.supersergey.deputysearch.import_genius_client.parser.validator.SearchResultValidator;
 
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,10 @@ public class ImportGeniusDirector {
         try {
             Document document = ImportGeniusClient.fetchImportGeniusPage(searchResult.getUrl());
             searchResult = ImportGeniusPageParser.parseDocument(document);
+            if (!SearchResultValidator.isValid(searchResult, searchResult.getCompany().getName()))
+            {
+                searchResult.setStatus(SearchResultStatus.IRRELEVANT);
+            }
         } catch (InvalidSearchResultException ex) {
             log.info("Parsing of url failed: " + searchResult.getUrl());
             searchResult.setStatus(SearchResultStatus.PARSED_FAIL);
