@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.google_search_client.filter;
+package ua.kiev.supersergey.deputysearch.commonlib.filter;
 
 /**
  * Created by supersergey on 20.05.18.

@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ua.kiev.supersergey.deputysearch.google_search_client.entity.Item;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.Item;
 import ua.kiev.supersergey.deputysearch.google_search_client.httpclient.GoogleSearchClient;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.CompanyRepository;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;

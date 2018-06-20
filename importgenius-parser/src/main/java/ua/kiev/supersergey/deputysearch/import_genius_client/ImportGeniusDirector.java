@@ -68,7 +68,6 @@ public class ImportGeniusDirector {
             searchResult.setErrorMessage(ex.getMessage());
         }
         finally {
-            searchResult.setParseTimeStamp(new Date());
             searchResult.setId(id);
             searchResult.setCompany(company);
             searchResult.setUrl(url);

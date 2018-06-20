@@ -6,7 +6,8 @@ package ua.kiev.supersergey.deputysearch.commonlib.entity;
 public enum SearchResultStatus {
 
     PARSED_OK("PARSED_OK"), // import genius page successfully parsed
-    PARSED_FAIL("PARSED_FAIL"); // failed to parse import genius page
+    PARSED_FAIL("PARSED_FAIL"), // failed to parse import genius page
+    IRRELEVANT("IRRELEVANT"); // irrelevant search result
 
     private String status;
 

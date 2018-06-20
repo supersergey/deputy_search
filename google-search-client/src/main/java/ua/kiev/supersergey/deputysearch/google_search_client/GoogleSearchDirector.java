@@ -7,9 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import ua.kiev.supersergey.deputysearch.google_search_client.filter.GoogleSearchResultFilter;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.filter.GoogleSearchResultFilter;
 import ua.kiev.supersergey.deputysearch.google_search_client.httpclient.GoogleSearchClient;
-import ua.kiev.supersergey.deputysearch.google_search_client.filter.CompanyNameTransformer;
+import ua.kiev.supersergey.deputysearch.commonlib.filter.CompanyNameTransformer;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.CompanyRepository;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.CompanyStatus;
@@ -37,10 +37,6 @@ public class GoogleSearchDirector {
     public GoogleSearchDirector(GoogleSearchClient googleSearchClient, CompanyRepository companyRepository) {
         this.googleSearchClient = googleSearchClient;
         this.companyRepository = companyRepository;
-    }
-
-    private long getCurrentTime() {
-        return new Date().getTime();
     }
 
     @Transactional
@@ -76,10 +72,11 @@ public class GoogleSearchDirector {
 
     private List<SearchResult> searchForCompany(Company c) {
         String shortCompanyName = CompanyNameTransformer.transform(c.getName());
+        GoogleSearchResultFilter searchResultFilter = new GoogleSearchResultFilter();
         return googleSearchClient
                 .searchByCompany(shortCompanyName)
                 .stream()
-                .filter(GoogleSearchResultFilter.suppliersOnly())
+                .filter(searchResultFilter)
                 .map(u -> SearchResult.builder()
                         .url(u.getLink())
                         .company(c)

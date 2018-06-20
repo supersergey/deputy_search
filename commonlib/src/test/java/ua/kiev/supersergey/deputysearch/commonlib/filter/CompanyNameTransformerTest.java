@@ -1,4 +1,4 @@
-package ua.kiev.supersergey.deputysearch.google_search_client.filter;
+package ua.kiev.supersergey.deputysearch.commonlib.filter;
 
 import org.junit.Test;
 
@@ -16,6 +16,7 @@ public class CompanyNameTransformerTest {
         assertEquals("БІЛОЦЕРКІВІНВЕСТБУД ХОЛДИНГ", CompanyNameTransformer.transform("Приватне підприємство \"БІЛОЦЕРКІВІНВЕСТБУД ХОЛДИНГ\""));
         assertEquals("ОЛВІ", CompanyNameTransformer.transform("Страхова компанія товариство з додатковою відповідальністю ''ОЛВІ''"));
         assertEquals("abc", CompanyNameTransformer.transform("abc"));
+        assertEquals("ТОН", CompanyNameTransformer.transform("ТОВ \"ТОН\""));
     }
 
 }

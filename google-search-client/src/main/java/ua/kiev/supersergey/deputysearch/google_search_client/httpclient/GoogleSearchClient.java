@@ -7,10 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.*;
-import ua.kiev.supersergey.deputysearch.google_search_client.entity.Item;
-import ua.kiev.supersergey.deputysearch.google_search_client.entity.Items;
+import ua.kiev.supersergey.deputysearch.google_search_client.GoogleSearchClientRequest;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.GoogleSearchEngineResponse;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.Item;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -19,37 +19,51 @@ import java.util.*;
 @Service
 @Slf4j
 @PropertySource("classpath:google.properties")
-public class GoogleSearchClient extends AbstractHttpClientWithLogging {
+public class GoogleSearchClient {
     @Value("${request.template}")
     private String requestTemplate;
     @Value("${google.search.engine.cx}")
     private String cx;
     @Value("${google.search.engine.apikey}")
     private String apiKey;
-    private WebClient client;
-    private Map<String, String> requestParams;
+    private final WebClient client;
 
-    @PostConstruct
-    private void init() {
-        client = WebClient.builder()
-                .baseUrl("https://www.googleapis.com/customsearch/v1")
-                .filter(logRequest())
-                .build();
-        requestParams = new HashMap<>();
-        requestParams.put("cx", cx);
-        requestParams.put("key", apiKey);
+    public GoogleSearchClient(WebClient client) {
+        this.client = client;
     }
 
     public List<Item> searchByCompany(String companyName) {
         log.info("Searching for the company: " + companyName);
-        requestParams.put("query", companyName);
-        List<Item> searchResult = client.get()
-                .uri(requestTemplate, requestParams)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve().bodyToMono(Items.class)
-                .log()
-                .block()
-                .getItems();
-        return CollectionUtils.isEmpty(searchResult) ? Collections.emptyList() : searchResult;
+        int startIndex = 0;
+        List<Item> items = new ArrayList<>();
+        Map<String, String> requestParams = GoogleSearchClientRequest.newBuilder()
+                .withApiKey(apiKey)
+                .withCx(cx)
+                .withCompanyName(companyName)
+                .build();
+        do {
+            requestParams.put("start", String.valueOf(startIndex));
+            GoogleSearchEngineResponse searchResult = queryGoogleSearchEngine(requestParams);
+            if (searchResult != null && searchResult.getQueries() != null) {
+                items.addAll(searchResult.getItems());
+                if (searchResult.getQueries().getNextPage() != null) {
+                    startIndex = searchResult.getQueries().getNextPage()[0].getStartIndex();
+                } else {
+                    startIndex = -1;
+                }
+            } else {
+                break;
+            }
+        } while (startIndex > 0);
+        return CollectionUtils.isEmpty(items) ? Collections.emptyList() : items;
+    }
+
+    protected GoogleSearchEngineResponse queryGoogleSearchEngine(Map<String, String> requestParams) {
+        return client.get()
+                        .uri(requestTemplate, requestParams)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .retrieve().bodyToMono(GoogleSearchEngineResponse.class)
+                        .log()
+                        .block();
     }
 }

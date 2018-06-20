@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -37,6 +38,8 @@ public class SearchResult {
     @Column(name = "url")
     private String url;
     @Column(name = "parse_time_stamp")
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private Date parseTimeStamp;
     @Column(name = "error_message")
     private String errorMessage;
