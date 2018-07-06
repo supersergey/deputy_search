@@ -31,6 +31,7 @@ public class ImportGeniusDirector {
     private int timeout;
     private final static Random RND = new Random();
     private SearchResultsRepository resultsRepository;
+    private SearchResultValidator searchResultValidator = new SearchResultValidator();
 
     @Autowired
     public ImportGeniusDirector(SearchResultsRepository resultsRepository) {
@@ -39,7 +40,7 @@ public class ImportGeniusDirector {
 
     public void parse() throws InterruptedException{
         do {
-            List<SearchResult> urlsToParse = resultsRepository.fetchNotParsedUrls(PageRequest.of(0, 10));
+            List<SearchResult> urlsToParse = resultsRepository.findByStatusIsNull(PageRequest.of(0, 10));
             if (CollectionUtils.isEmpty(urlsToParse)) {
                 break;
             } else {
@@ -63,11 +64,12 @@ public class ImportGeniusDirector {
         try {
             Document document = ImportGeniusClient.fetchImportGeniusPage(searchResult.getUrl());
             searchResult = ImportGeniusPageParser.parseDocument(document);
-            if (!SearchResultValidator.isValid(searchResult, searchResult.getCompany().getName()))
+            searchResult.setCompany(company);
+            if (!searchResultValidator.test(searchResult))
             {
                 searchResult.setStatus(SearchResultStatus.IRRELEVANT);
             }
-        } catch (InvalidSearchResultException ex) {
+        } catch (Throwable ex) {
             log.info("Parsing of url failed: " + searchResult.getUrl());
             searchResult.setStatus(SearchResultStatus.PARSED_FAIL);
             searchResult.setErrorMessage(ex.getMessage());

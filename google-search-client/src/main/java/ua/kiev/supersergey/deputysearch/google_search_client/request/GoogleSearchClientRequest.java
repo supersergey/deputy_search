@@ -33,7 +33,6 @@ public class GoogleSearchClientRequest {
             requestParams.put("cx", cx);
             requestParams.put("key", apiKey);
             requestParams.put("query", "\"" + companyName + "\"");
-            requestParams.put("exactTerms", "\"" + companyName + "\"");
             return requestParams;
         }
     };

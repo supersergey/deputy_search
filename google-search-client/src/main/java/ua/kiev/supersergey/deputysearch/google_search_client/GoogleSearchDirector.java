@@ -7,15 +7,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import ua.kiev.supersergey.deputysearch.google_search_client.response.filter.GoogleSearchResultFilter;
 import ua.kiev.supersergey.deputysearch.google_search_client.httpclient.GoogleSearchClient;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.filter.GoogleSearchResultFilter;
 import ua.kiev.supersergey.deputysearch.commonlib.filter.CompanyNameTransformer;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.CompanyRepository;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.CompanyStatus;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +32,9 @@ public class GoogleSearchDirector {
     @Value("${google_search_client.company_fetch_batch_size}")
     private int BATCH_SIZE;
 
-    private GoogleSearchClient googleSearchClient;
-    private CompanyRepository companyRepository;
+    private final GoogleSearchClient googleSearchClient;
+    private final CompanyRepository companyRepository;
+    private static final GoogleSearchResultFilter SEARCH_RESULT_FILTER = new GoogleSearchResultFilter();
 
     @Autowired
     public GoogleSearchDirector(GoogleSearchClient googleSearchClient, CompanyRepository companyRepository) {
@@ -41,7 +44,8 @@ public class GoogleSearchDirector {
 
     @Transactional
     public int search() {
-        List<Company> companiesUnprocessedByGoogle = findCompaniesUnprocessedByGoogle(BATCH_SIZE);
+        List<Company> companiesUnprocessedByGoogle = companyRepository.findByNameIn(new HashSet<>(Arrays.asList("Епіцентр К")));
+//                findCompaniesUnprocessedByGoogle(BATCH_SIZE);
         int counter = 0;
         if (CollectionUtils.isEmpty(companiesUnprocessedByGoogle)) {
             log.info("0 companies left");
@@ -53,6 +57,20 @@ public class GoogleSearchDirector {
             }
         }
         return counter;
+    }
+
+    private List<SearchResult> searchForCompany(Company c) {
+        String shortCompanyName = CompanyNameTransformer.transform(c.getName());
+        return googleSearchClient
+                .searchByCompany(shortCompanyName)
+                .stream()
+                .filter(SEARCH_RESULT_FILTER)
+                .map(u -> SearchResult.builder()
+                        .url(u.getLink())
+                        .company(c)
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     private int collectSearchResults(Company c, List<SearchResult> searchResults) {
@@ -68,21 +86,6 @@ public class GoogleSearchDirector {
         }
         c.setUrlTimeStamp(new Date());
         return counter;
-    }
-
-    private List<SearchResult> searchForCompany(Company c) {
-        String shortCompanyName = CompanyNameTransformer.transform(c.getName());
-        GoogleSearchResultFilter searchResultFilter = new GoogleSearchResultFilter();
-        return googleSearchClient
-                .searchByCompany(shortCompanyName)
-                .stream()
-                .filter(searchResultFilter)
-                .map(u -> SearchResult.builder()
-                        .url(u.getLink())
-                        .company(c)
-                        .build()
-                )
-                .collect(Collectors.toList());
     }
 
     List<Company> findCompaniesUnprocessedByGoogle(int size) {

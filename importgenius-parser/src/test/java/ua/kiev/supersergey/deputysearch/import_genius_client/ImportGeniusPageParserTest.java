@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
+import static ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResultStatus.PARSED_OK;
 
 /**
  * Created by supersergey on 19.05.18.
@@ -41,6 +42,14 @@ public class ImportGeniusPageParserTest {
         URI uri = getClass().getClassLoader().getResource("invalid-search.html").toURI();
         document = Jsoup.parse(Paths.get(uri).toFile(), StandardCharsets.UTF_8.name());
         ImportGeniusPageParser.parseDocument(document);
+    }
+
+    @Test
+    public void parseRealDocument() throws Exception{
+        URI uri = getClass().getClassLoader().getResource("why-irrelevant.html").toURI();
+        Document document = Jsoup.parse(Paths.get(uri).toFile(), StandardCharsets.UTF_8.name());
+        SearchResult searchResult = ImportGeniusPageParser.parseDocument(document);
+        assertEquals(PARSED_OK, searchResult.getStatus());
     }
 
 }

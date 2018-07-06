@@ -1,17 +1,26 @@
 package ua.kiev.supersergey.deputysearch.import_genius_client.parser.validator;
 
+import org.springframework.util.StringUtils;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
 import ua.kiev.supersergey.deputysearch.commonlib.filter.CompanyNameTransformer;
 
-public class SearchResultValidator {
-    public static boolean isValid(SearchResult searchResult, String companyName) {
-        String strippedCompanyName = CompanyNameTransformer.transform(companyName);
-        return searchResult != null
-                &&
-                (
-                        searchResult.getSenderName().toLowerCase().contains(strippedCompanyName.toLowerCase())
-                        ||
-                        searchResult.getRecepientName().toLowerCase().contains(strippedCompanyName.toLowerCase())
-                );
+import java.util.Arrays;
+import java.util.function.Predicate;
+
+public class SearchResultValidator implements Predicate<SearchResult> {
+    public boolean test(SearchResult searchResult) {
+        if (searchResult == null) {
+            return false;
+        }
+        String strippedCompanyName = CompanyNameTransformer.transform(searchResult.getCompany().getName());
+        strippedCompanyName = Arrays.stream(strippedCompanyName.split(" ")).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).findFirst().get();
+        boolean result = false;
+        if (!StringUtils.isEmpty(searchResult.getSenderName())) {
+            result = searchResult.getSenderName().toLowerCase().contains(strippedCompanyName.toLowerCase());
+        }
+        if (!StringUtils.isEmpty(searchResult.getRecepientName())) {
+            result = result || searchResult.getRecepientName().toLowerCase().contains(strippedCompanyName.toLowerCase());
+        }
+        return result;
     }
 }

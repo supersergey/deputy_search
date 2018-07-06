@@ -34,7 +34,8 @@ public class GoogleSearchClient {
 
     public List<Item> searchByCompany(String companyName) {
         log.info("Searching for the company: " + companyName);
-        int startIndex = 0;
+        int startIndex = 1;
+        int counter = 0;
         List<Item> items = new ArrayList<>();
         Map<String, String> requestParams = GoogleSearchClientRequest.newBuilder()
                 .withApiKey(apiKey)
@@ -43,27 +44,44 @@ public class GoogleSearchClient {
                 .build();
         do {
             requestParams.put("start", String.valueOf(startIndex));
-            GoogleSearchEngineResponse searchResult = queryGoogleSearchEngine(requestParams);
-            if (searchResult != null && searchResult.getQueries() != null) {
+            GoogleSearchEngineResponse searchResult;
+            try {
+                searchResult = queryGoogleSearchEngine(requestParams);
+            } catch (WebClientResponseException ex) {
+                log.error(String.format(
+                        "Error while querying google: code: %s, status: %d", ex.getMessage(), ex.getStatusCode().value())
+                );
+                return items;
+            }
+            if (searchResult != null && searchResult.getQueries() != null && searchResult.getItems() != null) {
                 items.addAll(searchResult.getItems());
-                if (searchResult.getQueries().getNextPage() != null) {
-                    startIndex = searchResult.getQueries().getNextPage()[0].getStartIndex();
-                } else {
-                    startIndex = -1;
-                }
+                counter++;
+                startIndex = calculateNextPageStartIndex(searchResult);
             } else {
                 break;
             }
         } while (startIndex > 0);
+        log.info("Fetched " + counter + " results for company: " + companyName);
         return CollectionUtils.isEmpty(items) ? Collections.emptyList() : items;
+    }
+
+    private int calculateNextPageStartIndex(GoogleSearchEngineResponse searchResult) {
+        int startIndex;
+        if (searchResult.getQueries().getNextPage() != null) {
+            startIndex = searchResult.getQueries().getNextPage()[0].getStartIndex();
+        } else {
+            startIndex = -1;
+        }
+        return startIndex;
     }
 
     protected GoogleSearchEngineResponse queryGoogleSearchEngine(Map<String, String> requestParams) {
         return client.get()
-                        .uri(requestTemplate, requestParams)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve().bodyToMono(GoogleSearchEngineResponse.class)
-                        .log()
-                        .block();
+                .uri(requestTemplate, requestParams)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(GoogleSearchEngineResponse.class)
+                .log()
+                .block();
     }
 }

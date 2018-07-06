@@ -43,7 +43,7 @@ public class SearchResult {
     private Date parseTimeStamp;
     @Column(name = "error_message")
     private String errorMessage;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_uuid")
     private Company company;
 

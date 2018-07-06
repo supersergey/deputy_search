@@ -17,6 +17,7 @@ public class CompanyNameTransformerTest {
         assertEquals("ОЛВІ", CompanyNameTransformer.transform("Страхова компанія товариство з додатковою відповідальністю ''ОЛВІ''"));
         assertEquals("abc", CompanyNameTransformer.transform("abc"));
         assertEquals("ТОН", CompanyNameTransformer.transform("ТОВ \"ТОН\""));
+        assertEquals("Замок Радомисль", CompanyNameTransformer.transform("Історико-культурний комплекс \"Замок Радомисль\""));
     }
 
 }
