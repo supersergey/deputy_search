@@ -56,12 +56,4 @@ public class SearchResultValidatorTest {
     public void isInvalid() {
         assertFalse(validator.test(invalidSearchResult));
     }
-
-    @Test
-    public void abc() {
-        String s = "this is supertest";
-        String max = Arrays.stream(s.split(" ")).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).findFirst().get();
-        System.out.println(max);
-
-    }
 }

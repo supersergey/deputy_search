@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ua.kiev.supersergey.deputysearch.google_search_client.httpclient.GoogleSearchClient;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.SearchResultContainer;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.filter.GoogleSearchResultFilter;
 import ua.kiev.supersergey.deputysearch.commonlib.filter.CompanyNameTransformer;
 import ua.kiev.supersergey.deputysearch.commonlib.dao.CompanyRepository;
@@ -15,9 +16,6 @@ import ua.kiev.supersergey.deputysearch.commonlib.entity.Company;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.CompanyStatus;
 import ua.kiev.supersergey.deputysearch.commonlib.entity.SearchResult;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,53 +40,56 @@ public class GoogleSearchDirector {
         this.companyRepository = companyRepository;
     }
 
-    @Transactional
-    public int search() {
-        List<Company> companiesUnprocessedByGoogle = companyRepository.findByNameIn(new HashSet<>(Arrays.asList("Епіцентр К")));
-//                findCompaniesUnprocessedByGoogle(BATCH_SIZE);
-        int counter = 0;
-        if (CollectionUtils.isEmpty(companiesUnprocessedByGoogle)) {
-            log.info("0 companies left");
-        } else {
-            for (Company c: companiesUnprocessedByGoogle) {
-                List<SearchResult> searchResults = searchForCompany(c);
-                counter += collectSearchResults(c, searchResults);
-                companyRepository.save(c);
-            }
-        }
-        return counter;
+    public void doSearch() {
+        List<Company> companiesUnprocessedByGoogle = findCompaniesUnprocessedByGoogle(BATCH_SIZE);
+        for (Company c : companiesUnprocessedByGoogle) {
+                    SearchResultContainer response = searchForCompany(c);
+                    switch (response.getErrorCode()) {
+                        case 0:
+                        case 403:
+                            collectResults(c, response);
+                            break;
+                        default:
+                            c.setStatus(CompanyStatus.FAIL);
+                            log.error("Error during search, error code: " + response.getErrorCode());
+                            break;
+                    }
+                    companyRepository.save(c);
+                    if (response.getErrorCode() == HttpStatus.FORBIDDEN.value()) {
+                        log.error("Google search access is forbidden, most probably the daily quota is exceeded");
+                        break;
+                    }
+                }
     }
 
-    private List<SearchResult> searchForCompany(Company c) {
+    private void collectResults(Company c, SearchResultContainer searchResultContainer) {
+        if (CollectionUtils.isEmpty(searchResultContainer.getItems())) {
+            c.setStatus(CompanyStatus.NOT_FOUND);
+            log.info("No search results found for company: " + c.getName());
+        } else {
+            c.setStatus(CompanyStatus.FOUND);
+            c.setSearchResults(
+                    searchResultContainer.getItems()
+                            .stream()
+                            .filter(SEARCH_RESULT_FILTER)
+                            .map(item ->
+                                    SearchResult.builder()
+                                            .company(c)
+                                            .url(item.getLink())
+                                            .build())
+                            .collect(Collectors.toList())
+            );
+            log.info(String.format("Found: %d results for company: %s", searchResultContainer.getItems().size(), c.getName()));
+        }
+    }
+
+    private SearchResultContainer searchForCompany(Company c) {
         String shortCompanyName = CompanyNameTransformer.transform(c.getName());
         return googleSearchClient
-                .searchByCompany(shortCompanyName)
-                .stream()
-                .filter(SEARCH_RESULT_FILTER)
-                .map(u -> SearchResult.builder()
-                        .url(u.getLink())
-                        .company(c)
-                        .build()
-                )
-                .collect(Collectors.toList());
+                .searchByCompany(shortCompanyName);
     }
 
-    private int collectSearchResults(Company c, List<SearchResult> searchResults) {
-        int counter = 0;
-        if (CollectionUtils.isEmpty(searchResults)) {
-            log.info("No search results found for company: " + c.getName());
-            c.setStatus(CompanyStatus.NOT_FOUND);
-        } else {
-            log.info(String.format("Found: %d results for company: %s", searchResults.size(), c.getName()));
-            c.setStatus(CompanyStatus.FOUND);
-            c.setSearchResults(searchResults);
-            counter++;
-        }
-        c.setUrlTimeStamp(new Date());
-        return counter;
-    }
-
-    List<Company> findCompaniesUnprocessedByGoogle(int size) {
+    private List<Company> findCompaniesUnprocessedByGoogle(int size) {
         return companyRepository.findCompaniesUnprocessedByGoogle(PageRequest.of(0, size));
     }
 }

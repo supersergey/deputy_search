@@ -13,7 +13,6 @@ public class SearchResultValidator implements Predicate<SearchResult> {
             return false;
         }
         String strippedCompanyName = CompanyNameTransformer.transform(searchResult.getCompany().getName());
-        strippedCompanyName = Arrays.stream(strippedCompanyName.split(" ")).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).findFirst().get();
         boolean result = false;
         if (!StringUtils.isEmpty(searchResult.getSenderName())) {
             result = searchResult.getSenderName().toLowerCase().contains(strippedCompanyName.toLowerCase());

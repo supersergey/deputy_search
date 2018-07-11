@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.*;
@@ -34,6 +35,8 @@ public class Company {
     @Column(name = "status")
     private CompanyStatus status;
     @Column(name = "url_time_stamp")
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private Date urlTimeStamp;
     @ManyToMany(mappedBy = "companies")
     @Builder.Default

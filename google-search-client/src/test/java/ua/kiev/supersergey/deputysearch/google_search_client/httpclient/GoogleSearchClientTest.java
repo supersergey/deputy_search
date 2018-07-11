@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.GoogleSearchEngineResponse;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.Item;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.SearchResultContainer;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -59,9 +60,9 @@ public class GoogleSearchClientTest{
 
     @Test
     public void searchByCompany() {
-        List<Item> items = googleSearchClient.searchByCompany("");
-        assertNotNull(items);
-        assertEquals(14, items.size());
+        SearchResultContainer container = googleSearchClient.searchByCompany("");
+        assertNotNull(container.getItems());
+        assertEquals(14, container.getItems().size());
     }
 
     class GoogleSearchClientMock extends GoogleSearchClient{

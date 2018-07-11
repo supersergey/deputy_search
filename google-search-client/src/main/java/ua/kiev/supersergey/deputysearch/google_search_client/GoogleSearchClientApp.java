@@ -19,7 +19,7 @@ public class GoogleSearchClientApp {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(GoogleSearchClientApp.class, args);
         GoogleSearchDirector googleSearchDirector = context.getBean(GoogleSearchDirector.class);
-        googleSearchDirector.search();
+        googleSearchDirector.doSearch();
         context.close();
     }
 

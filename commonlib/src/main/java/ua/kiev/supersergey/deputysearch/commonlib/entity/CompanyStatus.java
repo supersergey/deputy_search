@@ -5,7 +5,8 @@ package ua.kiev.supersergey.deputysearch.commonlib.entity;
  */
 public enum CompanyStatus {
     FOUND("FOUND"), // there are valid search results for import genius
-    NOT_FOUND("NOT_FOUND"); // there are no valid search results
+    NOT_FOUND("NOT_FOUND"), // there are no valid search results
+    FAIL("FAIL"); // error occurred while searching
 
     private String status;
 

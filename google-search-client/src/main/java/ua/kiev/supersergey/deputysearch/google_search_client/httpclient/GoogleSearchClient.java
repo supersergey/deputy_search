@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.*;
 import ua.kiev.supersergey.deputysearch.google_search_client.request.GoogleSearchClientRequest;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.GoogleSearchEngineResponse;
 import ua.kiev.supersergey.deputysearch.google_search_client.response.Item;
+import ua.kiev.supersergey.deputysearch.google_search_client.response.SearchResultContainer;
 
 import java.util.*;
 
@@ -32,47 +33,47 @@ public class GoogleSearchClient {
         this.client = client;
     }
 
-    public List<Item> searchByCompany(String companyName) {
+    public SearchResultContainer searchByCompany(String companyName) {
         log.info("Searching for the company: " + companyName);
-        int startIndex = 1;
-        int counter = 0;
-        List<Item> items = new ArrayList<>();
         Map<String, String> requestParams = GoogleSearchClientRequest.newBuilder()
                 .withApiKey(apiKey)
                 .withCx(cx)
                 .withCompanyName(companyName)
                 .build();
-        do {
-            requestParams.put("start", String.valueOf(startIndex));
-            GoogleSearchEngineResponse searchResult;
-            try {
-                searchResult = queryGoogleSearchEngine(requestParams);
-            } catch (WebClientResponseException ex) {
-                log.error(String.format(
-                        "Error while querying google: code: %s, status: %d", ex.getMessage(), ex.getStatusCode().value())
-                );
-                return items;
-            }
-            if (searchResult != null && searchResult.getQueries() != null && searchResult.getItems() != null) {
-                items.addAll(searchResult.getItems());
-                counter++;
-                startIndex = calculateNextPageStartIndex(searchResult);
-            } else {
-                break;
-            }
-        } while (startIndex > 0);
-        log.info("Fetched " + counter + " results for company: " + companyName);
-        return CollectionUtils.isEmpty(items) ? Collections.emptyList() : items;
+        return fetchSearchResults(requestParams);
     }
 
-    private int calculateNextPageStartIndex(GoogleSearchEngineResponse searchResult) {
-        int startIndex;
-        if (searchResult.getQueries().getNextPage() != null) {
-            startIndex = searchResult.getQueries().getNextPage()[0].getStartIndex();
-        } else {
-            startIndex = -1;
+    private SearchResultContainer fetchSearchResults(Map<String, String> requestParams) {
+        List<Item> items = new ArrayList<>();
+        requestParams.put("start", "1");
+        try {
+            int startIndex;
+            do {
+                GoogleSearchEngineResponse searchResult = queryGoogleSearchEngine(requestParams);
+                if (!CollectionUtils.isEmpty(searchResult.getItems())) {
+                    items.addAll(searchResult.getItems());
+                } else {
+                    break;
+                }
+                if (searchResult.getQueries() != null) {
+                    startIndex = getNextIndex(searchResult);
+                    requestParams.put("start", String.valueOf(startIndex));
+                } else {
+                    break;
+                }
+            } while (startIndex > 0);
+            return SearchResultContainer.builder()
+                    .isFinishedSuccessfully(true)
+                    .items(items)
+                    .build();
+        } catch (WebClientResponseException ex) {
+            log.error(String.format("Google web client error, code: %d, message: %s", ex.getStatusCode().value(), ex.getStatusText()));
+            return SearchResultContainer.builder()
+                    .items(items)
+                    .isFinishedSuccessfully(false)
+                    .errorCode(ex.getStatusCode().value())
+                    .build();
         }
-        return startIndex;
     }
 
     protected GoogleSearchEngineResponse queryGoogleSearchEngine(Map<String, String> requestParams) {
@@ -83,5 +84,18 @@ public class GoogleSearchClient {
                 .bodyToMono(GoogleSearchEngineResponse.class)
                 .log()
                 .block();
+    }
+
+    private int getNextIndex(GoogleSearchEngineResponse searchResult) {
+        if (searchResult == null) {
+            return -1;
+        }
+        int startIndex;
+        if (searchResult.getQueries().getNextPage() != null) {
+            startIndex = searchResult.getQueries().getNextPage()[0].getStartIndex();
+        } else {
+            startIndex = -1;
+        }
+        return startIndex;
     }
 }
