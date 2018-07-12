@@ -29,6 +29,10 @@ public class CompanyNameTransformerTest {
         assertEquals("ЛИДЛЕНД", CompanyNameTransformer.transform("ЛИДЛЕНД лтд."));
         assertEquals("ЛИДЛЕНД", CompanyNameTransformer.transform("ТзОВ ЛИДЛЕНД лтд"));
         assertEquals("ЛИДЛЕНД", CompanyNameTransformer.transform("ТзОВ ЛИДЛЕНД ЛімІТЕд."));
+        assertEquals("МЕД-КЛУБ", CompanyNameTransformer.transform("ПП \"МЕД-КЛУБ\""));
+        assertEquals("МЕД-КЛУБ", CompanyNameTransformer.transform("ПП МЕД-КЛУБ Ltd."));
+        assertEquals("Товариство", CompanyNameTransformer.transform("ТОВ \"Товариство\""));
+
     }
 
 }
