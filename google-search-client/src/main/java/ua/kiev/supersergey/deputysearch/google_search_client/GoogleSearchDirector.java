@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ua.kiev.supersergey.deputysearch.google_search_client.httpclient.GoogleSearchClient;
@@ -43,43 +42,12 @@ public class GoogleSearchDirector {
     public void doSearch() {
         List<Company> companiesUnprocessedByGoogle = findCompaniesUnprocessedByGoogle(BATCH_SIZE);
         for (Company c : companiesUnprocessedByGoogle) {
-                    SearchResultContainer response = searchForCompany(c);
-                    switch (response.getErrorCode()) {
-                        case 0:
-                        case 403:
-                            collectResults(c, response);
-                            break;
-                        default:
-                            c.setStatus(CompanyStatus.FAIL);
-                            log.error("Error during search, error code: " + response.getErrorCode());
-                            break;
-                    }
-                    companyRepository.save(c);
-                    if (response.getErrorCode() == HttpStatus.FORBIDDEN.value()) {
-                        log.error("Google search access is forbidden, most probably the daily quota is exceeded");
-                        break;
-                    }
-                }
-    }
-
-    private void collectResults(Company c, SearchResultContainer searchResultContainer) {
-        if (CollectionUtils.isEmpty(searchResultContainer.getItems())) {
-            c.setStatus(CompanyStatus.NOT_FOUND);
-            log.info("No search results found for company: " + c.getName());
-        } else {
-            c.setStatus(CompanyStatus.FOUND);
-            c.setSearchResults(
-                    searchResultContainer.getItems()
-                            .stream()
-                            .filter(SEARCH_RESULT_FILTER)
-                            .map(item ->
-                                    SearchResult.builder()
-                                            .company(c)
-                                            .url(item.getLink())
-                                            .build())
-                            .collect(Collectors.toList())
-            );
-            log.info(String.format("Found: %d results for company: %s", searchResultContainer.getItems().size(), c.getName()));
+            SearchResultContainer response = searchForCompany(c);
+            boolean isContinue = collectResultsWithRegardToErrorCode(c, response);
+            companyRepository.save(c);
+            if (!isContinue) {
+                break;
+            }
         }
     }
 
@@ -87,6 +55,48 @@ public class GoogleSearchDirector {
         String shortCompanyName = CompanyNameTransformer.transform(c.getName());
         return googleSearchClient
                 .searchByCompany(shortCompanyName);
+    }
+
+
+    private boolean collectResultsWithRegardToErrorCode(Company c, SearchResultContainer searchResultContainer) {
+        switch (searchResultContainer.getErrorCode()) {
+            case 0:
+                if (CollectionUtils.isEmpty(searchResultContainer.getItems())) {
+                    c.setStatus(CompanyStatus.NOT_FOUND);
+                    log.info("No search results found for company: " + c.getName());
+                } else {
+                    c.setStatus(CompanyStatus.FOUND);
+                    log.info(String.format("Found: %d results for company: %s", searchResultContainer.getItems().size(), c.getName()));
+                    assignSearchResultsToCompany(c, searchResultContainer);
+                }
+                return true;
+            case 403:
+                c.setStatus(CompanyStatus.FORBIDDEN);
+                log.error("Google search access is forbidden, most probably the daily quota is exceeded");
+                assignSearchResultsToCompany(c, searchResultContainer);
+                return false;
+            default:
+                log.error(
+                        String.format("Failed to query google for company %s. Error code: %d",
+                                c.getName(), searchResultContainer.getErrorCode())
+                );
+                assignSearchResultsToCompany(c, searchResultContainer);
+                c.setStatus(CompanyStatus.FAIL);
+                return true;
+        }
+    }
+
+    private void assignSearchResultsToCompany(Company c, SearchResultContainer searchResultContainer) {
+        c.setSearchResults(searchResultContainer.getItems()
+                .stream()
+                .filter(SEARCH_RESULT_FILTER)
+                .map(item ->
+                        SearchResult.builder()
+                                .company(c)
+                                .url(item.getLink())
+                                .build())
+                .collect(Collectors.toList())
+        );
     }
 
     private List<Company> findCompaniesUnprocessedByGoogle(int size) {

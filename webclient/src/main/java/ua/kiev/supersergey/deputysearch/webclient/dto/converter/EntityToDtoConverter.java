@@ -15,6 +15,7 @@ public class EntityToDtoConverter {
         if (searchResult == null) {
             return result;
         }
+        result.setId(searchResult.getId());
         result.setBeneficiary(
                 String.join(" ", searchResult.getLastName(), searchResult.getFirstName(), searchResult.getPatronymic()));
         // todo add urls
@@ -26,7 +27,8 @@ public class EntityToDtoConverter {
         result.setSender(String.join("\n",
                 searchResult.getSenderName(),
                 searchResult.getSenderAddress()));
-        result.setFreightDesc(cutString(searchResult.getFreightDesc(), 100) + buildUrl(searchResult.getUrl()));
+        result.setFreightDesc(cutString(searchResult.getFreightDesc(), 100));
+        result.setUrl(searchResult.getUrl());
         return result;
     }
 

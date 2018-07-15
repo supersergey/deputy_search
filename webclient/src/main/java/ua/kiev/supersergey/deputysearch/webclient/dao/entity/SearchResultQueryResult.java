@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 
 @Data
 public class SearchResultQueryResult {
+    private long id;
     private String recepientName;
     private String recepientAddress;
     private String senderName;

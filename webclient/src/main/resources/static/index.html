@@ -4,7 +4,7 @@
     <title>Deputy Search: explore companies</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" type="text/css" media="screen" href="jquery-ui-redmond/jquery-ui.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/free-jqgrid@4.15.4/css/ui.jqgrid.min.css">
+    <link rel="stylesheet" href="css/ui.jqgrid.custom.css">
 
     <script
             src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -23,13 +23,14 @@
             jQuery("#list2").jqGrid({
                 url: '/grid',
                 datatype: "json",
-                colNames: ['Бенефициар', 'Компания', 'Операция', 'Получатель', 'Отправитель'],
+                colNames: ['Бенефициар', 'Компания', 'Операция', 'Получатель', 'Отправитель', 'url'],
                 colModel: [
                     {name: 'beneficiary', index: 'beneficiary', search: true},
                     {name: 'company', index: 'company', search: true},
-                    {name: 'freightDesc', index: 'freightDesc', search: true},
+                    {name: 'freightDesc', index: 'freightDesc', search: true, formatter:htmlFormatter},
                     {name: 'sender', index: 'sender', search: true},
-                    {name: 'recepient', index: 'recepient', search: true}
+                    {name: 'recepient', index: 'recepient', search: true},
+                    {name: 'url', index: 'url', hidden: true}
                 ],
                 rowNum: 30,
                 pager: '#pager2',
@@ -50,6 +51,13 @@
                 .navGrid('#pager1', {edit: false, add: false, del: false, search: true})
             ;
         });
+        
+        htmlFormatter = function( cellvalue, options, rowObject ) {
+            {
+                return cellvalue.substring(0, 100) + '<a href="' + rowObject.url + '" target="_blank"> Подробнее >></a>';
+            }
+        }
+        
     </script>
     <table id="list2"></table>
     <div id="pager2"></div>

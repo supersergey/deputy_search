@@ -18,9 +18,6 @@ import java.util.stream.Stream;
 public class DataAccessService {
     private SearchResultsRepositoryJpa searchResultsRepositoryJpa;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Autowired
     public DataAccessService(SearchResultsRepositoryJpa searchResultsRepositoryJpa) {
         this.searchResultsRepositoryJpa = searchResultsRepositoryJpa;

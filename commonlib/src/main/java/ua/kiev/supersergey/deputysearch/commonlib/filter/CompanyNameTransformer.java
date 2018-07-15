@@ -6,7 +6,7 @@ package ua.kiev.supersergey.deputysearch.commonlib.filter;
 public class CompanyNameTransformer {
 
     private static final String[] prefixes = {
-            "ТОВ", "ТЗОВ", "ОАО", "ЗАО", "ООО", "ЧП", "КП", "ДП", "РТЦ", "СХК", "ПП", "АБ"};
+            "ТОВ", "ТЗОВ", "ОАО", "ЗАО", "ООО", "ЧП", "КП", "ДП", "РТЦ", "СХК", "ПП", "АБ", "БЦ"};
     private static final String[] suffixes = {
             "Лтд", "Гмбх", "Лимитед", "Лімітед", "ltd", "gmbh"};
 

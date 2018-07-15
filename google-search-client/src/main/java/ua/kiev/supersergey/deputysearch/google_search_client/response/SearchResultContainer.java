@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public class SearchResultContainer {
     private List<Item> items;
-    private boolean isFinishedSuccessfully;
     private int errorCode;
+    private String errorMessage;
 }

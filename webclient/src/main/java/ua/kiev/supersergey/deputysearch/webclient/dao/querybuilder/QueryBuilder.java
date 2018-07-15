@@ -11,6 +11,7 @@ public class QueryBuilder {
         if (isCountOnly) {
             baseQuery.append(" count(*) ");
         } else {
+            baseQuery.append(" sr.id as id, ");
             baseQuery.append(" sr.recepient_name as recepientName, ");
             baseQuery.append(" sr.recepient_address as recepientAddress, ");
             baseQuery.append(" sr.sender_name as senderName, ");

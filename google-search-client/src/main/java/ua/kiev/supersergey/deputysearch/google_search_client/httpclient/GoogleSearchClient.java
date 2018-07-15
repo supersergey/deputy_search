@@ -61,17 +61,16 @@ public class GoogleSearchClient {
                 } else {
                     break;
                 }
-            } while (startIndex > 0);
+            } while (startIndex > 0 && startIndex < 100); // restriction of Google CSE, no more than 100 items per search
             return SearchResultContainer.builder()
-                    .isFinishedSuccessfully(true)
                     .items(items)
                     .build();
         } catch (WebClientResponseException ex) {
             log.error(String.format("Google web client error, code: %d, message: %s", ex.getStatusCode().value(), ex.getStatusText()));
             return SearchResultContainer.builder()
                     .items(items)
-                    .isFinishedSuccessfully(false)
                     .errorCode(ex.getStatusCode().value())
+                    .errorMessage(ex.getStatusText())
                     .build();
         }
     }
