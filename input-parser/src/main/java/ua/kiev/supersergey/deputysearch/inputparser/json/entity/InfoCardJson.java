@@ -17,6 +17,7 @@ import java.util.List;
  */
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 public class InfoCardJson {
     @Id
     private String guid;
@@ -28,4 +29,5 @@ public class InfoCardJson {
     private String url;
     @JsonProperty("first_name")
     private String firstName;
+    private List<CompanyJson> companies = new ArrayList<>();
 }

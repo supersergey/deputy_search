@@ -1,5 +1,6 @@
 package ua.kiev.supersergey.deputysearch.inputparser.json.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
+@AllArgsConstructor
 public class CompanyJson {
     private String guid;
     private String name;
